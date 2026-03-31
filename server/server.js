@@ -57,6 +57,6 @@ app.use(adminRouter);
   var port = server.address().port
   console.log("Ung dung Node.js dang lang nghe tai dia chi: http://%s:%s", host, port)
   });
-  serverWS.listen(5000);
+  serverWS.listen(5001);
   var chatConnection = new IOConnection(serverWS);
 })()

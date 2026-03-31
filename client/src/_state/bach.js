@@ -1,12 +1,12 @@
-import { atom } from 'recoil';
+import { atom } from "recoil";
 
 export { bachAtom };
 
 const bachAtom = atom({
-    key: {
-        name: ''
-    },
-    default: {
-        name: 'Trần Xuân Bách'
-    }
+  key: {
+    name: "",
+  },
+  default: {
+    name: "Trần Xuân Bách",
+  },
 });

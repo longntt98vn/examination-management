@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import ConversationList from '../ConversationList';
-import MessageList from '../MessageList';
-import './Messenger.css';
-import { PrivateRoute } from '_components/PrivateRoute';
-import { Switch } from 'react-router-dom';
+import React, { useState } from "react";
+import ConversationList from "../ConversationList";
+import MessageList from "../MessageList";
+import "./Messenger.css";
+import { PrivateRoute } from "_components/PrivateRoute";
+import { Routes } from "react-router-dom";
 export default function Messenger(props) {
-  const [conversationLoaded, setConservationLoaded] = useState(false)
-    return (
-      <div className="messenger">
-        {/* <Toolbar
+  const [conversationLoaded, setConservationLoaded] = useState(false);
+  return (
+    <div className="messenger">
+      {/* <Toolbar
           title="Messenger"
           leftItems={[
             <ToolbarButton key="cog" icon="ion-ios-cog" />
@@ -18,7 +18,7 @@ export default function Messenger(props) {
           ]}
         /> */}
 
-        {/* <Toolbar
+      {/* <Toolbar
           title="Conversation Title"
           rightItems={[
             <ToolbarButton key="info" icon="ion-ios-information-circle-outline" />,
@@ -27,20 +27,17 @@ export default function Messenger(props) {
           ]}
         /> */}
 
-        <div className="scrollable sidebar">
-          <ConversationList setLoaded={setConservationLoaded}/>
-        </div>
-
-        <div className="scrollable content">
-          {conversationLoaded && 
-          <Switch>
-            <PrivateRoute exact path="/chat/:vnu_id" component={MessageList} />
-          </Switch>
-        }
-        
-        
-          
-        </div>
+      <div className="scrollable sidebar">
+        <ConversationList setLoaded={setConservationLoaded} />
       </div>
-    );
+
+      <div className="scrollable content">
+        {conversationLoaded && (
+          <Routes>
+            <PrivateRoute exact path="/chat/:vnu_id" component={MessageList} />
+          </Routes>
+        )}
+      </div>
+    </div>
+  );
 }

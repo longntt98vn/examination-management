@@ -1,39 +1,43 @@
-import { atom } from 'recoil';
-
-
+import { atom } from "recoil";
 
 const curChatPersonAtom = atom({
-    key: {
-        name: 'curChatPerson'
-    },
-    default:  null, 
+  key: {
+    name: "curChatPerson",
+  },
+  default: null,
 });
 
 const curListMessagesAtom = atom({
-    key: {
-        name: 'curListMessages'
-    },
-    default: null,
-})
+  key: {
+    name: "curListMessages",
+  },
+  default: null,
+});
 
 const curListContactAtom = atom({
-    key: {
-        name: 'curListContact'
-    },
-    default: null,
-})
+  key: {
+    name: "curListContact",
+  },
+  default: null,
+});
 
 const waitToAddContactAtom = atom({
-    key:{
-        name: "waitToAddContact"
-    },
-    default: null
-})
+  key: {
+    name: "waitToAddContact",
+  },
+  default: null,
+});
 
 const waitForUpdateLatestMsgAtom = atom({
-    key: {
-        name: "waitForUpdateLatestMsg"
-    },
-    default: null
-})
-export { curChatPersonAtom, curListMessagesAtom, curListContactAtom, waitToAddContactAtom, waitForUpdateLatestMsgAtom };
+  key: {
+    name: "waitForUpdateLatestMsg",
+  },
+  default: null,
+});
+export {
+  curChatPersonAtom,
+  curListMessagesAtom,
+  curListContactAtom,
+  waitToAddContactAtom,
+  waitForUpdateLatestMsgAtom,
+};

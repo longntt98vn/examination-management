@@ -1,8 +1,8 @@
-import { atom } from 'recoil';
+import { atom } from "recoil";
 
 const alertAtom = atom({
-    key: 'alert',
-    default: null
+  key: "alert",
+  default: null,
 });
 
 export { alertAtom };

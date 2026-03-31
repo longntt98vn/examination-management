@@ -1,12 +1,10 @@
-import { atom } from 'recoil';
+import { atom } from "recoil";
 
 export { currentClassAtom };
 
 const currentClassAtom = atom({
-    key: {
-        name: 'currentclass'
-    },
-    default: JSON.parse(localStorage.getItem('currentClass'))
+  key: {
+    name: "currentclass",
+  },
+  default: JSON.parse(localStorage.getItem("currentClass")),
 });
-
-

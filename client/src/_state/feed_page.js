@@ -1,17 +1,14 @@
-import { atom } from 'recoil';
+import { atom } from "recoil";
 
 export { feedPageAtom, isInitiatedSocketFeed };
 
 const feedPageAtom = atom({
-    key: {
-        name: 'feed_page_atom'
-    },
-    default: {posts: []}
+  key: {
+    name: "feed_page_atom",
+  },
+  default: { posts: [] },
 });
 
 class isInitiatedSocketFeed {
-    static value = false;
+  static value = false;
 }
-
-
-

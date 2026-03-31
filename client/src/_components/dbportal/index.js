@@ -1,2 +1,2 @@
-export * from './DBPortal';
-export * from './UploadForm';
+export * from "./DBPortal";
+export * from "./UploadForm";

@@ -1,3 +1,3 @@
-export * from './Dashboard';
-export * from './GPADash';
-export * from './StatisticBoard';
+export * from "./Dashboard";
+export * from "./GPADash";
+export * from "./StatisticBoard";
