@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write \"middleware/**/*.{js,jsx,ts,tsx,json,css,md}\""
+    "format": "prettier --write \"middleware/**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "env": "cp .env.example .env"
   },
   "author": "",
   "license": "ISC",

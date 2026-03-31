@@ -109,10 +109,11 @@ export const getNetwork = async (gateway: Gateway): Promise<Network> => {
  */
 export const getContracts = async (
     network: Network
-): Promise<{ assetContract: Contract; qsccContract: Contract }> => {
+): Promise<{ assetContract: Contract; qsccContract: Contract; candidateContract: Contract }> => {
     const assetContract = network.getContract(config.chaincodeName);
     const qsccContract = network.getContract('qscc');
-    return { assetContract, qsccContract };
+    const candidateContract = network.getContract(config.chaincodeName);
+    return { assetContract, qsccContract, candidateContract };
 };
 
 /**

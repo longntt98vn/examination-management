@@ -14,6 +14,7 @@ import { jobsRouter } from './jobs.router';
 import { logger } from './logger';
 import { transactionsRouter } from './transactions.router';
 import cors from 'cors';
+import { candidatesRouter } from './candidates.router';
 
 const { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } = StatusCodes;
 
@@ -65,6 +66,7 @@ export const createServer = async (): Promise<Application> => {
     app.use('/api/assets', authenticateApiKey, assetsRouter);
     app.use('/api/jobs', authenticateApiKey, jobsRouter);
     app.use('/api/transactions', authenticateApiKey, transactionsRouter);
+    app.use('/api/candidates', authenticateApiKey, candidatesRouter);
 
     // For everything else
     app.use((_req, res) =>

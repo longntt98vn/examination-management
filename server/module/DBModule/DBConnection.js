@@ -9,6 +9,8 @@ const SubjectSchema = require('./Schemas/SubjectSchema');
 const { ScoreSchema, ScoresTableSchema } = require('./Schemas/ScoreSchema');
 const { FeedSchema, PostSchema, CommentSchema } = require('./Schemas/FeedSchema');
 const { SemesterSchema } = require('./Schemas/Semester');
+const { CandidateSchema } = require('./Schemas/CandidateSchema');
+
 let DBConnection = {
     initiated : false,
     Init : (async () => {
@@ -27,6 +29,7 @@ let DBConnection = {
         this.Comment = db.model(Configs.DB_SCHEMA.COMMENT, CommentSchema);
         this.Semester = db.model(Configs.DB_SCHEMA.SEMESTER, SemesterSchema);
         this.Test = db.model(Configs.DB_SCHEMA.TEST_SCHEMA, TestSchema);
+        this.Candidate = db.model(Configs.DB_SCHEMA.CANDIDATE, CandidateSchema);
         global.DBConnection = this;
         this.initiated = true;
 

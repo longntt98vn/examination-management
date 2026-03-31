@@ -1,19 +1,19 @@
 import { useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
-import { useRecoilValue, RecoilRoot } from "recoil";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 
 import { authAtom, initClassAtom } from "_state";
 import { Login, PasswordRecover } from "./";
 
 export { Account };
 
-function Account({ history, match }) {
+function Account() {
   const auth = useRecoilValue(authAtom);
   const classPicked = useRecoilValue(initClassAtom);
-  const { path } = match;
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (auth) history.push("/");
+    if (auth) navigate("/");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -22,11 +22,8 @@ function Account({ history, match }) {
       <div className="row">
         <div className="col-sm-8 offset-sm-2 mt-5">
           <Routes>
-            <Route path={`${path}/login`} component={Login} />
-            <Route
-              path={`${path}/passwordrecover`}
-              component={PasswordRecover}
-            />
+            <Route path="login" element={<Login />} />
+            <Route path="passwordrecover" element={<PasswordRecover />} />
           </Routes>
         </div>
       </div>

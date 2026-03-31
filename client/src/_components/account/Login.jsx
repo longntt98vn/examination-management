@@ -1,6 +1,6 @@
 import { Form, Input, Button, Checkbox } from "antd";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Routes } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -40,7 +40,9 @@ function Login(props) {
   }, [auth]);
   return loginDone ? (
     // logged in
-    <Route path="*" element={<Navigate to="/" />} />
+    <Routes>
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
   ) : (
     <div className="card m-3">
       <h4 className="card-header">Đăng nhập hệ thống</h4>
@@ -72,7 +74,7 @@ function Login(props) {
             )}
             Đăng nhập
           </button>
-          <Link to="passwordrecover" className="btn btn-link">
+          <Link to="/account/passwordrecover" className="btn btn-link">
             Quên mật khẩu
           </Link>
         </form>

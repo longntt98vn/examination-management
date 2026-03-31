@@ -127,13 +127,24 @@ function App() {
             <Layout>
               <Content style={{ margin: "20px 16px" }}>
                 <Routes>
-                  <PrivateRoute exact path="/" component={Home} />
-                  {/* <PrivateRoute exact path="/:classID" children={<Child classID="123"/>} component={Child}/>  */}
-                  <Route path="/account" component={Account} />
-                  <PrivateRoute path="/chat" component={Chat} />
-                  <PrivateRoute path="/profile" component={Profile} />
-                  <PrivateRoute exact path="/dbportal" component={DBPortal} />
-                  <PrivateRoute path="/:classID" component={Child} />
+                  <Route path="/" element={<PrivateRoute component={Home} />} />
+                  <Route path="/account/*" element={<Account />} />
+                  <Route
+                    path="/chat"
+                    element={<PrivateRoute component={Chat} />}
+                  />
+                  <Route
+                    path="/profile"
+                    element={<PrivateRoute component={Profile} />}
+                  />
+                  <Route
+                    path="/dbportal"
+                    element={<PrivateRoute component={DBPortal} />}
+                  />
+                  <Route
+                    path="/:classID/*"
+                    element={<PrivateRoute component={Child} />}
+                  />
                   <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
               </Content>
@@ -186,23 +197,26 @@ function Child(props) {
           {userData.role == "teacher" && (
             <>
               <Routes>
-                <PrivateRoute exact path="/:classID/" component={Home} />
-                <PrivateRoute
-                  exact
+                <Route
+                  path="/:classID/"
+                  element={<PrivateRoute component={Home} />}
+                />
+                <Route
                   path="/:classID/dashboard"
-                  component={Dashboard}
+                  element={<PrivateRoute component={Dashboard} />}
                 />
-                <PrivateRoute
-                  exact
+                <Route
                   path="/:classID/studentinfo"
-                  component={StudentInfoList}
+                  element={<PrivateRoute component={StudentInfoList} />}
                 />
-                <PrivateRoute
-                  exact
+                <Route
                   path="/:classID/studentscore"
-                  component={StudentScoreList}
+                  element={<PrivateRoute component={StudentScoreList} />}
                 />
-                <PrivateRoute exact path="/:classID/feed" component={Feed} />
+                <Route
+                  path="/:classID/feed"
+                  element={<PrivateRoute component={Feed} />}
+                />
                 <Route
                   path="*"
                   element={
@@ -217,12 +231,19 @@ function Child(props) {
           {userData.role == "student" && (
             <>
               <Routes>
-                <PrivateRoute exact path="/" component={Home} />
-                {/* <PrivateRoute exact path="/:classID/studentinfo" component={StudentInfoList} />
-                            <PrivateRoute exact path="/:classID/studentscore" component={StudentScoreList} /> */}
-                <PrivateRoute exact path="/stuhome" component={StuHome} />
-                <PrivateRoute exact path="/:classID/feed" component={Feed} />
-                <PrivateRoute path="/personalscore" component={PersonalScore} />
+                <Route path="/" element={<PrivateRoute component={Home} />} />
+                <Route
+                  path="/stuhome"
+                  element={<PrivateRoute component={StuHome} />}
+                />
+                <Route
+                  path="/:classID/feed"
+                  element={<PrivateRoute component={Feed} />}
+                />
+                <Route
+                  path="/personalscore"
+                  element={<PrivateRoute component={PersonalScore} />}
+                />
                 <Route
                   path="*"
                   element={
@@ -230,11 +251,6 @@ function Child(props) {
                   }
                 />
               </Routes>
-            </>
-          )}
-          {userData.role == "admin" && (
-            <>
-              <Routes>{/* route admin here */}</Routes>
             </>
           )}
         </>
@@ -255,43 +271,3 @@ function ClassNameDisplay() {
   localStorage.removeItem("currentClass");
   return "";
 }
-
-// function App() {
-//     const authWrapper = useAuthWrapper();
-//     return (
-//         <div className={'app-container' + (authWrapper.tokenValue ? ' bg-light' : '')}>
-//             {/* <div>{JSON.stringify(authWrapper.tokenValue)}</div> */}
-//             <Router history={history}>
-//             <Layout>
-//                 <Header style={{ padding: '20px 0px 2px 20px', height: '70px' }}>
-//                     <Title style={{ padding: 0, color: 'white' }} level={3}>Student Advisor Web App</Title>
-//                 </Header>
-//             </Layout>
-//             <Layout>
-//                 <Nav />
-//                 <Layout>
-//                     <Content style={{ margin: '20px 16px' }}>
-//                         <Switch>
-//                           <PrivateRoute exact path="/" component={Home} />
-//                           <PrivateRoute exact path="/dashboard" component={Dashboard} />
-//                           <PrivateRoute exact path="/studentinfo" component={StudentInfoList} />
-//                           <PrivateRoute exact path="/studentscore" component={StudentScoreList} />
-//                           <PrivateRoute exact path="/feed" component={Feed} />
-//                           <PrivateRoute exact path="/chat" component={Chat} />
-//                           <PrivateRoute exact path="/profile" component={Profile} />
-//                           {/* <PrivateRoute path="/users" component={Users} /> */}
-//                           <Route path="/account" component={Account} />
-//                           <Redirect from="*" to="/" />
-//                         </Switch>
-//                     </Content>
-//                     <Footer style={{ textAlign: 'center' }}>
-//                         Phần mềm quản lý CVHT & SV
-//                         <br/>
-//                         Thực hiện bởi @vakoyomi, @miaht94, @anhbomx13, @h2b, @tuna
-//                     </Footer>
-//                </Layout>
-//              </Layout>
-//             </Router>
-//         </div>
-//     );
-// }

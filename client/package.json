@@ -1,56 +1,56 @@
 {
-    "name": "react-recoil-registration-login-example",
-    "version": "0.1.0",
-    "dependencies": {
-        "@ant-design/icons": "^4.7.0",
-        "@emotion/react": "^11.5.0",
-        "@emotion/styled": "^11.3.0",
-        "@hookform/resolvers": "^2.8.0",
-        "@material-ui/core": "^4.12.4",
-        "@mui/icons-material": "^7.3.9",
-        "@mui/lab": "^7.0.1-beta.23",
-        "@mui/material": "^7.3.9",
-        "antd": "^4.16.13",
-        "axios": "^0.24.0",
-        "history": "^4.10.1",
-        "prettier": "^3.8.1",
-        "react": "^19.2.4",
-        "react-dom": "^19.2.4",
-        "react-highlight-words": "^0.17.0",
-        "react-hook-form": "^7.15.1",
-        "react-router-dom": "^7.13.2",
-        "react-scripts": "5",
-        "react-shave": "^1.0.1",
-        "recharts": "^2.1.6",
-        "recoil": "^0.4.1",
-        "recoil-nexus": "^0.3.6",
-        "shave": "^2.5.10",
-        "socket.io-client": "^4.3.2",
-        "yup": "^0.32.9"
-    },
-    "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject",
-        "env": "cp .env.example .env",
-        "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\""
-    },
-    "eslintConfig": {
-        "extends": "react-app"
-    },
-    "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
-    },
-    "proxy": "http://localhost:8082",
-    "homepage": "./"
+  "name": "react-recoil-registration-login-example",
+  "version": "0.1.0",
+  "dependencies": {
+    "@ant-design/icons": "^6.1.1",
+    "@emotion/react": "^11.5.0",
+    "@emotion/styled": "^11.3.0",
+    "@hookform/resolvers": "^2.8.0",
+    "@material-ui/core": "^4.12.4",
+    "@mui/icons-material": "^7.3.9",
+    "@mui/lab": "^7.0.1-beta.23",
+    "@mui/material": "^7.3.9",
+    "antd": "^6.3.5",
+    "axios": "^0.24.0",
+    "history": "^4.10.1",
+    "moment": "^2.30.1",
+    "prettier": "^3.8.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-highlight-words": "^0.17.0",
+    "react-hook-form": "^7.15.1",
+    "react-router-dom": "^7.13.2",
+    "react-scripts": "5",
+    "react-shave": "^1.0.1",
+    "recharts": "^3.8.1",
+    "recoil": "^0.4.1",
+    "recoil-nexus": "^0.3.6",
+    "shave": "^2.5.10",
+    "socket.io-client": "^4.3.2",
+    "yup": "^0.32.9"
+  },
+  "scripts": {
+    "start": "BROWSER=none react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "env": "cp .env.example .env",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\""
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "homepage": "./"
 }

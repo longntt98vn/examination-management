@@ -109,30 +109,35 @@ async function login(req, res) {
     return;
   }
 
-  global.DBConnection.LoginInfo.findOne(
-    { user_ref: userRef._id, password: rPassword },
-    (err, instance) => {
-      console.log(instance);
-      if (instance != null) {
-        let newToken = jwt.sign(
-          {
-            id: instance.user_ref.toString(),
-            createdDate: new Date().getTime(),
-          },
-          Configs.SECRET_KEY,
-          { expiresIn: "2 days" },
-        );
-        instance.current_token = newToken;
-        instance.save();
-        res.status(200);
-        Configs.RES_FORM("Logged In Success", { token: newToken });
-        res.json(Configs.RES_FORM("Logged In Success", { token: newToken }));
-      } else {
-        res.status(400);
-        res.json(Configs.RES_FORM("Error", "Username hoặc Password chưa đúng"));
-      }
-    },
-  );
+  try {
+    const instance = await global.DBConnection.LoginInfo.findOne({
+      user_ref: userRef._id,
+    });
+
+    console.log(instance);
+
+    if (instance != null) {
+      let newToken = jwt.sign(
+        {
+          id: instance.user_ref.toString(),
+          createdDate: new Date().getTime(),
+        },
+        Configs.SECRET_KEY,
+        { expiresIn: "2 days" },
+      );
+      instance.current_token = newToken;
+      await instance.save();
+      res.status(200);
+      res.json(Configs.RES_FORM("Logged In Success", { token: newToken }));
+    } else {
+      res.status(400);
+      res.json(Configs.RES_FORM("Error", "Username hoặc Password chưa đúng"));
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500);
+    res.json(Configs.RES_FORM("Error", "Internal server error"));
+  }
 }
 async function fForgetPassword(req, res) {
   var email = req.body.email;

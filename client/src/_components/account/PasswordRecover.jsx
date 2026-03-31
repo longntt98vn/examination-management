@@ -46,7 +46,7 @@ function PasswordRecover({ history }) {
             )}
             Khôi phục
           </button>
-          <Link to="login" className="btn btn-link">
+          <Link to="/account/login" className="btn btn-link">
             Quay lại
           </Link>
         </form>

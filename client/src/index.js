@@ -1,20 +1,15 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import { RecoilRoot } from "recoil";
 import RecoilNexus from "recoil-nexus";
 import "index.css";
 import { App } from "App";
-
-// setup fake backend
-// import { fakeBackend } from '_helpers';
-// fakeBackend();
-
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById("app"));
+root.render(
   <React.StrictMode>
     <RecoilRoot>
       <RecoilNexus />
       <App />
     </RecoilRoot>
-  </React.StrictMode>,
-  document.getElementById("app"),
+  </React.StrictMode>
 );

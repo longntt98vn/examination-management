@@ -1,23 +1,19 @@
-import { Route, Navigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { Navigate } from "react-router-dom";
 
 import { useAuthWrapper } from "_helpers";
 
 export { PrivateRoute };
 
-function PrivateRoute({ component: Component, ...rest }) {
+function PrivateRoute({ component: Component, children, ...rest }) {
   const authWrapper = useAuthWrapper();
-  return (
-    <Route
-      {...rest}
-      render={(props) => {
-        if (authWrapper.tokenValue) {
-          return <Component {...props} />;
-        } else
-          //not logged in
-
-          return <Route path="*" element={<Navigate to="/account/login" />} />;
-      }}
-    />
-  );
+  
+  if (!authWrapper.tokenValue) {
+    return <Navigate to="/account/login" replace />;
+  }
+  
+  if (Component) {
+    return <Component {...rest} />;
+  }
+  
+  return children;
 }

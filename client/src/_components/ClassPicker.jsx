@@ -118,7 +118,7 @@ function ClassPicker(props) {
       placement="right"
       onClose={onDrawerClose}
       visible={drawerVisible}
-      width="640"
+      size="large"
     >
       <Row wrap="true">
         <CollectionCreateForm
