@@ -1,12 +1,11 @@
-
 import express, { Request, Response } from 'express';
 import { Contract } from 'fabric-network';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
-import { getBlockHeight } from './fabric';
-import { logger } from './logger';
-import * as config from './config';
+import { getBlockHeight } from '../fabric';
+import { logger } from '../logger';
+import * as config from '../config';
 import { Queue } from 'bullmq';
-import { getJobCounts } from './jobs';
+import { getJobCounts } from '../jobs';
 
 const { SERVICE_UNAVAILABLE, OK } = StatusCodes;
 

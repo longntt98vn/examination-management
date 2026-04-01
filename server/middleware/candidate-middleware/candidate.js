@@ -8,7 +8,7 @@ module.exports = {
 
       // 2. Gửi lên Blockchain qua Backend API
       const blockchainResponse = await axios.post(
-        "http://localhost:3000/api/candidates",
+        "http://localhost:3000/api/candidate",
         req.body,
         { headers: { "X-Api-Key": process.env.FABRIC_API_KEY } },
       );

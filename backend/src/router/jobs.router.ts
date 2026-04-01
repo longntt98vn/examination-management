@@ -1,9 +1,8 @@
-
 import { Queue } from 'bullmq';
 import express, { Request, Response } from 'express';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
-import { getJobSummary, JobNotFoundError } from './jobs';
-import { logger } from './logger';
+import { getJobSummary, JobNotFoundError } from '../jobs';
+import { logger } from '../logger';
 
 const { INTERNAL_SERVER_ERROR, NOT_FOUND, OK } = StatusCodes;
 

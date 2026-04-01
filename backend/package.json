@@ -54,7 +54,7 @@
   },
   "scripts": {
     "prebuild": "npm run lint",
-    "build": "tsc",
+    "build": "tsc -w",
     "clean": "rimraf ./dist",
     "format": "prettier --write \"{src,test}/**/*.ts\"",
     "generateEnv": "./scripts/generateEnv.sh",

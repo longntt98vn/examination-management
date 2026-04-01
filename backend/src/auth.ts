@@ -1,4 +1,3 @@
-
 import { logger } from './logger';
 import passport from 'passport';
 import { NextFunction, Request, Response } from 'express';

@@ -17,28 +17,30 @@ export class ExamContract extends Contract {
     examID: string,
     hashCode: string,
   ): Promise<void> {
-    const exists = await this.GetExam(ctx, `${DocType.EXAM}:${examID}`);
-    if (exists) {
+    const key = `${DocType.EXAM}:${examID}`;
+    const existingExam = await ctx.stub.getState(key);
+    if (existingExam && existingExam.length > 0) {
       throw new Error(`Exam ${examID} already exists`);
     }
 
     const exam: Exam = {
       docType: DocType.EXAM,
-      ID: `${DocType.EXAM}:${examID}`,
+      ID: key,
       Status: 0,
       ExamID: examID,
       HashCode: hashCode,
     };
 
     await ctx.stub.putState(
-      `${DocType.EXAM}:${examID}`,
+      key,
       Buffer.from(JSON.stringify(sortKeysRecursive(exam))),
     );
   }
 
-  @Transaction()
+  @Transaction(false)
   public async GetExam(ctx: Context, examID: string): Promise<Exam> {
-    const examJSON = await ctx.stub.getState(`${DocType.EXAM}:${examID}`);
+    const key = `${DocType.EXAM}:${examID}`;
+    const examJSON = await ctx.stub.getState(key);
     if (!examJSON || examJSON.length === 0) {
       throw new Error(`Exam ${examID} does not exist`);
     }

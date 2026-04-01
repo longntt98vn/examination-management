@@ -114,8 +114,37 @@ export const processSubmitTransactionJob = async (
     job: Job<JobData, JobResult>
 ): Promise<JobResult> => {
     logger.debug({ jobId: job.id, jobName: job.name }, 'Processing job');
+    const assetContract = app.locals[job.data.mspid]?.assetContract as Contract;
+    const examContract = app.locals[job.data.mspid]?.examContract as Contract;
+    const scoreContract = app.locals[job.data.mspid]?.scoreContract as Contract;
+    const candidateContract = app.locals[job.data.mspid]
+        ?.candidateContract as Contract;
+    let contract: Contract | undefined;
 
-    const contract = app.locals[job.data.mspid]?.assetContract as Contract;
+    switch (job.data.transactionName) {
+        case 'CreateAsset':
+        case 'UpdateAsset':
+        case 'DeleteAsset':
+        case 'TransferAsset':
+        case 'ReadAsset':
+        case 'AssetExists':
+        case 'GetAllAssets':
+            contract = assetContract;
+            break;
+        case 'CreateExam':
+        case 'GetExam':
+            contract = examContract;
+            break;
+        case 'CreateScore':
+        case 'GetScore':
+            contract = scoreContract;
+            break;
+        case 'CreateCandidate':
+        case 'GetCandidate':
+            contract = candidateContract;
+            break;
+    }
+
     if (contract === undefined) {
         logger.error(
             { jobId: job.id, jobName: job.name },

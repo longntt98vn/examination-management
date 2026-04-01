@@ -1,17 +1,18 @@
-
 import express, { Application, NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import passport from 'passport';
 import pinoMiddleware from 'pino-http';
-import { assetsRouter } from './assets.router';
+import { assetsRouter } from './router/assets.router';
 import { authenticateApiKey, fabricAPIKeyStrategy } from './auth';
-import { healthRouter } from './health.router';
-import { jobsRouter } from './jobs.router';
+import { healthRouter } from './router/health.router';
+import { jobsRouter } from './router/jobs.router';
 import { logger } from './logger';
-import { transactionsRouter } from './transactions.router';
+import { transactionsRouter } from './router/transactions.router';
 import cors from 'cors';
-import { candidatesRouter } from './candidates.router';
+import { candidateRouter } from './router/candidate.router';
+import { examRouter } from './router/exam.router';
+import { scoreRouter } from './router/score.router';
 
 const { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } = StatusCodes;
 
@@ -63,7 +64,9 @@ export const createServer = async (): Promise<Application> => {
     app.use('/api/assets', authenticateApiKey, assetsRouter);
     app.use('/api/jobs', authenticateApiKey, jobsRouter);
     app.use('/api/transactions', authenticateApiKey, transactionsRouter);
-    app.use('/api/candidates', authenticateApiKey, candidatesRouter);
+    app.use('/api/candidate', authenticateApiKey, candidateRouter);
+    app.use('/api/exam', authenticateApiKey, examRouter);
+    app.use('/api/score', authenticateApiKey, scoreRouter);
 
     // For everything else
     app.use((_req, res) =>

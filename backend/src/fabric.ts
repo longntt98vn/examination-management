@@ -1,4 +1,3 @@
-
 import {
     Contract,
     DefaultEventHandlerStrategies,
@@ -106,11 +105,37 @@ export const getNetwork = async (gateway: Gateway): Promise<Network> => {
  */
 export const getContracts = async (
     network: Network
-): Promise<{ assetContract: Contract; qsccContract: Contract; candidateContract: Contract }> => {
-    const assetContract = network.getContract(config.chaincodeName);
+): Promise<{
+    assetContract: Contract;
+    qsccContract: Contract;
+    examContract: Contract;
+    scoreContract: Contract;
+    candidateContract: Contract;
+}> => {
+    const assetContract = network.getContract(
+        config.chaincodeName,
+        'AssetTransfer'
+    );
     const qsccContract = network.getContract('qscc');
-    const candidateContract = network.getContract(config.chaincodeName);
-    return { assetContract, qsccContract, candidateContract };
+    const candidateContract = network.getContract(
+        config.chaincodeName,
+        'CandidateContract'
+    );
+    const examContract = network.getContract(
+        config.chaincodeName,
+        'ExamContract'
+    );
+    const scoreContract = network.getContract(
+        config.chaincodeName,
+        'ScoreContract'
+    );
+    return {
+        assetContract,
+        qsccContract,
+        candidateContract,
+        examContract,
+        scoreContract,
+    };
 };
 
 /**

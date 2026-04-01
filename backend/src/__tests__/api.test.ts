@@ -1,4 +1,3 @@
-
 import { Job, Queue } from 'bullmq';
 import { Application } from 'express';
 import { Contract, Transaction } from 'fabric-network';
