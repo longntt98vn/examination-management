@@ -1,6 +1,3 @@
-/*
- * SPDX-License-Identifier: Apache-2.0
- */
 // Deterministic JSON.stringify()
 import {
   Context,
@@ -10,7 +7,7 @@ import {
   Transaction,
 } from "fabric-contract-api";
 import sortKeysRecursive from "sort-keys-recursive";
-import { Asset } from "./asset";
+import { Asset } from "../asset";
 
 @Info({
   title: "AssetTransfer",

@@ -1,6 +1,3 @@
-/*
- * SPDX-License-Identifier: Apache-2.0
- */
 
 import express, { Application, NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';

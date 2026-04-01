@@ -2,7 +2,7 @@ import { Object, Property } from "fabric-contract-api";
 import { DocType } from "./constants";
 
 @Object()
-export class Candidate {
+export class Score {
   @Property()
   public docType: DocType = DocType.UNKNOWN;
 
@@ -10,10 +10,10 @@ export class Candidate {
   public ID: string = "";
 
   @Property()
-  public CandidateID: string = "";
+  public ScoreID: string = "";
 
   @Property()
-  public ExamID: string = "";
+  public CandidateID: string = "";
 
   @Property()
   public HashCode: string = "";

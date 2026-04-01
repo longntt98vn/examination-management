@@ -1,6 +1,3 @@
-/*
- * SPDX-License-Identifier: Apache-2.0
- */
 
 import { Job, Queue } from 'bullmq';
 import { Application } from 'express';

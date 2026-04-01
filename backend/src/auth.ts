@@ -1,6 +1,3 @@
-/*
- * SPDX-License-Identifier: Apache-2.0
- */
 
 import { logger } from './logger';
 import passport from 'passport';

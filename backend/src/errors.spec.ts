@@ -1,6 +1,3 @@
-/*
- * SPDX-License-Identifier: Apache-2.0
- */
 
 import { TimeoutError, TransactionError } from 'fabric-network';
 import {

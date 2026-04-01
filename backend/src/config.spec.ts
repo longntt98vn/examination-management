@@ -1,6 +1,3 @@
-/*
- * SPDX-License-Identifier: Apache-2.0
- */
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 

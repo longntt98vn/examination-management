@@ -1,6 +1,3 @@
-/*
- * SPDX-License-Identifier: Apache-2.0
- */
 
 import express, { Request, Response } from 'express';
 import { Contract } from 'fabric-network';
