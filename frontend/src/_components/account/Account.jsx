@@ -3,7 +3,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
 import { authAtom, initClassAtom } from "_state";
-import { Login, PasswordRecover } from "./";
+import { Login, PasswordRecover } from ".";
 
 export { Account };
 
