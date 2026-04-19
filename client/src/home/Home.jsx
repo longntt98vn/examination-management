@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, Routes } from "react-router-dom";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
 import { authAtom } from "_state";
@@ -251,16 +251,6 @@ function Home() {
                     </Row>
                   </>
                 )}
-                <br />
-                <b>Website Quản lý Sinh viên - Cố vấn học tập</b>
-                <br />
-                <b>Bài tập lớn môn Lập trình ứng dụng Web</b>
-                <br />
-                <b>Thực hiện bởi:</b>{" "}
-                {
-                  " Trần Xuân Bách, Đặng Thế Hoàng Anh, Nguyễn Việt Anh, Hoàng Hữu Bách, Nguyễn Bá Anh Tuấn"
-                }
-                <br />
               </div>
             </div>
           </>
@@ -284,9 +274,9 @@ function Home() {
           </>
         )}
         {studentFirstClassLoaded && classWrapper.curClass && (
-          <>
+          <Routes>
             <Route path="*" element={<Navigate to={`/stuhome`} />} />
-          </>
+          </Routes>
         )}
 
         {userData.role === "admin" && (

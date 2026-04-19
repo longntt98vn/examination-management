@@ -111,13 +111,12 @@ function ClassPicker(props) {
       </Col>
     </div>,
   );
-
   return (
     <Drawer
       title="Chọn một lớp..."
       placement="right"
       onClose={onDrawerClose}
-      visible={drawerVisible}
+      open={drawerVisible}
       size="large"
     >
       <Row wrap="true">
@@ -139,7 +138,7 @@ const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
   return (
     <Modal
       animation={false}
-      visible={visible}
+      open={visible}
       title="Tạo lớp học mới"
       okText="Tạo"
       cancelText="Hủy"
@@ -182,56 +181,83 @@ const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
   );
 };
 
-// const input = [{
-//         "id" : "1",
-//         "className" : "K64CACLC1",
-//         "background" : "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg"},
-//     {
-//         "id" : "2",
-//         "className" : "K64CACLC2",
-//         "background" : "https://maisienoble.github.io/jig/images/backgrounds/brilliant-shapes.jpg"},
-//     {
-//         "id" : "3",
-//         "className" : "K64CACLC3",
-//         "background" : "https://maisienoble.github.io/jig/images/backgrounds/dark-light-blue.jpg"},
-//     {
-//         "id" : "4",
-//         "className" : "K64CACLC4",
-//         "background" : "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg"},
-//     {
-//         "id" : "5",
-//         "className" : "K64CLC1",
-//         "background" : "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg"},
-//     {
-//         "id" : "2",
-//         "className" : "K64CACLC2",
-//         "background" : "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg"},
-//     {
-//         "id" : "3",
-//         "className" : "K64CACLC3",
-//         "background" : "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg"},
-//     {
-//         "id" : "4",
-//         "className" : "K64CACLC4",
-//         "background" : "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg"},
-//     {
-//         "id" : "5",
-//         "className" : "K64CLC1",
-//         "background" : "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg"},
-//     {
-//         "id" : "2",
-//         "className" : "K64CACLC2",
-//         "background" : "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg"},
-//     {
-//         "id" : "3",
-//         "className" : "K64CACLC3",
-//         "background" : "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg"},
-//     {
-//         "id" : "4",
-//         "className" : "K64CACLC4",
-//         "background" : "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg"},
-//     {
-//         "id" : "5",
-//         "className" : "K64CLC1",
-//         "background" : "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg"}
+// const input = [
+//   {
+//     id: "1",
+//     className: "K64CACLC1",
+//     background:
+//       "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg",
+//   },
+//   {
+//     id: "2",
+//     className: "K64CACLC2",
+//     background:
+//       "https://maisienoble.github.io/jig/images/backgrounds/brilliant-shapes.jpg",
+//   },
+//   {
+//     id: "3",
+//     className: "K64CACLC3",
+//     background:
+//       "https://maisienoble.github.io/jig/images/backgrounds/dark-light-blue.jpg",
+//   },
+//   {
+//     id: "4",
+//     className: "K64CACLC4",
+//     background:
+//       "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg",
+//   },
+//   {
+//     id: "5",
+//     className: "K64CLC1",
+//     background:
+//       "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg",
+//   },
+//   {
+//     id: "2",
+//     className: "K64CACLC2",
+//     background:
+//       "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg",
+//   },
+//   {
+//     id: "3",
+//     className: "K64CACLC3",
+//     background:
+//       "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg",
+//   },
+//   {
+//     id: "4",
+//     className: "K64CACLC4",
+//     background:
+//       "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg",
+//   },
+//   {
+//     id: "5",
+//     className: "K64CLC1",
+//     background:
+//       "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg",
+//   },
+//   {
+//     id: "2",
+//     className: "K64CACLC2",
+//     background:
+//       "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg",
+//   },
+//   {
+//     id: "3",
+//     className: "K64CACLC3",
+//     background:
+//       "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg",
+//   },
+//   {
+//     id: "4",
+//     className: "K64CACLC4",
+//     background:
+//       "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg",
+//   },
+//   {
+//     id: "5",
+//     className: "K64CLC1",
+//     background:
+//       "https://maisienoble.github.io/jig/images/backgrounds/blueish.jpg",
+//   },
 // ];

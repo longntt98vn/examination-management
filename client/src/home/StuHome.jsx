@@ -213,16 +213,6 @@ function StuHome() {
                     </Row>
                   </>
                 )}
-                <br />
-                <b>Ứng dụng Quản lý Sinh viên - Cố vấn học tập</b>
-                <br />
-                <b>Bài tập lớn môn Lập trình ứng dụng Web</b>
-                <br />
-                <b>Thực hiện bởi:</b>{" "}
-                {
-                  " Trần Xuân Bách, Đặng Thế Hoàng Anh, Nguyễn Việt Anh, Hoàng Hữu Bách, Nguyễn Bá Anh Tuấn"
-                }
-                <br />
               </div>
             </div>
           </>

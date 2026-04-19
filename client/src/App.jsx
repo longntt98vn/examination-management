@@ -42,9 +42,7 @@ export { App };
 function App() {
   const authWrapper = useAuthWrapper();
   const classWrapper = useClassWrapper();
-  const [drawerVisible, setDrawerVisible] = useRecoilState(
-    classPickerVisibleAtom,
-  );
+  const [drawerVisible, setDrawerVisible] = useState(false);
   const [loadingVisible, setLoadingVisible] =
     useRecoilState(loadingVisibleAtom);
 
@@ -195,38 +193,33 @@ function Child(props) {
       {classWrapper.curClass && (
         <>
           {userData.role == "teacher" && (
-            <>
-              <Routes>
-                <Route
-                  path="/:classID/"
-                  element={<PrivateRoute component={Home} />}
-                />
-                <Route
-                  path="/:classID/dashboard"
-                  element={<PrivateRoute component={Dashboard} />}
-                />
-                <Route
-                  path="/:classID/studentinfo"
-                  element={<PrivateRoute component={StudentInfoList} />}
-                />
-                <Route
-                  path="/:classID/studentscore"
-                  element={<PrivateRoute component={StudentScoreList} />}
-                />
-                <Route
-                  path="/:classID/feed"
-                  element={<PrivateRoute component={Feed} />}
-                />
-                <Route
-                  path="*"
-                  element={
-                    <Navigate
-                      to={`/${classWrapper.curClass.class_id}/dashboard`}
-                    />
-                  }
-                />
-              </Routes>
-            </>
+            <Routes>
+              <Route
+                path="/"
+                element={<PrivateRoute component={Home} />}
+              />
+              <Route
+                path="/dashboard"
+                element={<PrivateRoute component={Dashboard} />}
+              />
+              <Route
+                path="/studentinfo"
+                element={<PrivateRoute component={StudentInfoList} />}
+              />
+              <Route
+                path="/studentscore"
+                element={<PrivateRoute component={StudentScoreList} />}
+              />
+              <Route path="/feed" element={<PrivateRoute component={Feed} />} />
+              <Route
+                path="*"
+                element={
+                  <Navigate
+                    to={`/${classWrapper.curClass.class_id}/dashboard`}
+                  />
+                }
+              />
+            </Routes>
           )}
           {userData.role == "student" && (
             <>

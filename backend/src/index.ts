@@ -12,15 +12,15 @@ import {
     createWallet,
     getContracts,
     getNetwork,
-} from './fabric';
+} from './utils/fabric';
 import {
     initJobQueue,
     initJobQueueScheduler,
     initJobQueueWorker,
-} from './jobs';
-import { logger } from './logger';
+} from './utils/jobs';
+import { logger } from './utils/logger';
 import { createServer } from './server';
-import { isMaxmemoryPolicyNoeviction } from './redis';
+import { isMaxmemoryPolicyNoeviction } from './utils/redis';
 import { Queue, QueueScheduler, Worker } from 'bullmq';
 
 let jobQueue: Queue | undefined;

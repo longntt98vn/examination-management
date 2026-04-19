@@ -1,4 +1,10 @@
-import { Context, Contract, Info, Transaction } from "fabric-contract-api";
+import {
+  Context,
+  Contract,
+  Info,
+  Returns,
+  Transaction,
+} from "fabric-contract-api";
 import sortKeysRecursive from "sort-keys-recursive";
 import { DocType } from "../constants";
 import { Score } from "../score";
@@ -18,14 +24,15 @@ export class ScoreContract extends Contract {
     candidateID: string,
     hashCode: string,
   ): Promise<void> {
-    const exists = await this.GetScore(ctx, `${DocType.SCORE}:${scoreID}`);
-    if (exists) {
+    const key = `${DocType.SCORE}:${scoreID}`;
+    const existingScore = await ctx.stub.getState(key);
+    if (existingScore && existingScore.length > 0) {
       throw new Error(`Score ${scoreID} already exists`);
     }
 
     const score: Score = {
       docType: DocType.SCORE,
-      ID: `${DocType.SCORE}:${scoreID}`,
+      ID: key,
       Status: 0,
       ScoreID: scoreID,
       CandidateID: candidateID,
@@ -33,17 +40,41 @@ export class ScoreContract extends Contract {
     };
 
     await ctx.stub.putState(
-      `${DocType.SCORE}:${scoreID}`,
+      key,
       Buffer.from(JSON.stringify(sortKeysRecursive(score))),
     );
   }
 
-  @Transaction()
+  @Transaction(false)
   public async GetScore(ctx: Context, scoreID: string): Promise<Score> {
-    const scoreJSON = await ctx.stub.getState(`${DocType.SCORE}:${scoreID}`);
+    const key = `${DocType.SCORE}:${scoreID}`;
+    const scoreJSON = await ctx.stub.getState(key);
     if (!scoreJSON || scoreJSON.length === 0) {
       throw new Error(`Score ${scoreID} does not exist`);
     }
     return JSON.parse(scoreJSON.toString()) as Score;
+  }
+
+  @Transaction(false)
+  @Returns("string")
+  public async GetAllScores(ctx: Context): Promise<string> {
+    const allResults = [];
+    const iterator = await ctx.stub.getStateByRange(`${DocType.SCORE}:`, `${DocType.SCORE}:~`);
+    let result = await iterator.next();
+    while (!result.done) {
+      const strValue = Buffer.from(result.value.value.toString()).toString(
+        "utf8",
+      );
+      let record;
+      try {
+        record = JSON.parse(strValue) as Score;
+      } catch (err) {
+        console.log(err);
+        record = strValue;
+      }
+      allResults.push(record);
+      result = await iterator.next();
+    }
+    return JSON.stringify(allResults);
   }
 }
