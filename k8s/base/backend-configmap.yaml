@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: examination-system
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
+  LOG_LEVEL: "info"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  MONGODB_HOST: "mongodb"
+  MONGODB_PORT: "27017"
+  MONGODB_DATABASE: "examination_db"
+  # Hyperledger Fabric Configuration
+  HLF_CHANNEL_NAME: "mychannel"
+  HLF_CHAINCODE_NAME: "basic"
+  # CORS Configuration
+  CORS_ORIGIN: "*"

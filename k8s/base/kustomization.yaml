@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: examination-system
+
+resources:
+  - namespace.yaml
+  - mongodb-pvc.yaml
+  - mongodb-deployment.yaml
+  - redis-deployment.yaml
+  - backend-configmap.yaml
+  - backend-deployment.yaml
+  - frontend-configmap.yaml
+  - frontend-deployment.yaml
+  - secrets.yaml
+  - ingress.yaml
+  - hpa.yaml
+  - pdb.yaml
+  - resource-quota.yaml
+  - rbac.yaml
+  - logging-config.yaml
+
+commonLabels:
+  app.kubernetes.io/name: examination-system
+  app.kubernetes.io/version: "1.0.0"
+  app.kubernetes.io/managed-by: kustomize

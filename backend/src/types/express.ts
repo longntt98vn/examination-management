@@ -1,4 +1,5 @@
-import { Document } from 'mongoose';
+import { Document, Model } from 'mongoose';
+import { UploadedFile } from 'express-fileupload';
 
 declare global {
     namespace Express {
@@ -13,10 +14,19 @@ declare global {
                 date_of_birth?: number;
                 email?: string;
                 vnu_id?: string;
+                _id?: any;
             };
             senderVNUId?: string;
             isAdmin?: boolean;
             authState?: string;
+            classInstance?: any;
+            feedInstance?: any;
+            postInstance?: any;
+            files?: {
+                [key: string]: UploadedFile | UploadedFile[];
+            } | null;
+            fileUploadPath?: string;
+            fileName?: string;
         }
     }
 }

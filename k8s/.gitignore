@@ -1,0 +1,23 @@
+# Ignore backup files
+backups/
+*.backup
+
+# Ignore generated files
+*.generated.yaml
+
+# Ignore local overrides
+local/
+*.local.yaml
+
+# Ignore secrets (should not be committed)
+secrets.yaml.local
+*.secret.yaml
+
+# Ignore temporary files
+*.tmp
+*.swp
+*~
+
+# Ignore IDE files
+.vscode/
+.idea/
