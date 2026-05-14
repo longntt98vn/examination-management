@@ -4,3 +4,7 @@ export function updateInstance(instance: any, update: any) {
     }
     return instance;
 }
+
+export function toLower(v: string) {
+    return v.toLowerCase();
+}

@@ -7,5 +7,5 @@ export const useBoolean = (initialValue: boolean = false) => {
   const setFalse = () => setValue(false);
   const toggle = () => setValue(!value);
 
-  return [value, setTrue, setFalse, toggle];
+  return [value, setTrue, setFalse, toggle] as const;
 };

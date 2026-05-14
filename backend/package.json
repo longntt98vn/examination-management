@@ -76,8 +76,10 @@
     "start": "node --require source-map-support/register ./dist",
     "start:dotenv": "node --require source-map-support/register --require dotenv/config ./dist",
     "start:dev": "yarn build && node --require source-map-support/register --require dotenv/config ./dist",
-    "start:redis": "docker run -p 6379:6379 --name fabric-sample-redis -d redis --maxmemory-policy noeviction --requirepass \"${REDIS_PASSWORD}\"",
-    "test": "jest"
+    "start:redis": "docker run -p 6379:pack6379 --name fabric-sample-redis -d redis --maxmemory-policy noeviction --requirepass \"${REDIS_PASSWORD}\"",
+    "test": "jest",
+    "db:reset": "sh scripts/db-reset.sh",
+    "db:dump": "sh scripts/db-dump.sh"
   },
   "author": "Hyperledger",
   "license": "Apache-2.0",

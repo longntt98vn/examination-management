@@ -1,21 +1,19 @@
 import mongoose, { Model, Connection } from 'mongoose';
 import { DB_CONFIGS, DB_SCHEMA } from '../config/constants';
-import { UserSchema } from '../database/schemas/user-schema';
-import { LoginInfoSchema } from '../database/schemas/login-info-schema';
+import { UserSchema } from '../database/schemas/user.schema';
+import { LoginInfoSchema } from '../database/schemas/login-info.schema';
 import { ClassSchema } from '../database/schemas/class-schema';
 import { ChatSchema, MessageSchema } from '../database/schemas/chat-schema';
-import { TestSchema } from '../database/schemas/test-schema';
-import { SubjectSchema } from '../database/schemas/subject-schema';
-import {
-    ScoreSchema,
-    ScoresTableSchema,
-} from '../database/schemas/score-schema';
+import { ExamSchema } from '../database/schemas/exam.schema';
+import { SubjectSchema } from '../database/schemas/subject.schema';
+import { ScoreSchema } from '../database/schemas/score.schema';
 import {
     FeedSchema,
     PostSchema,
     CommentSchema,
 } from '../database/schemas/feed-schema';
-import { SemesterSchema } from '../database/schemas/stemester-schema';
+import { SemesterSchema } from '../database/schemas/semester.schema';
+import { ScoreLogSchema } from '../database/schemas/score-log.schema';
 
 interface IDBConnection {
     initiated: boolean;
@@ -27,12 +25,13 @@ interface IDBConnection {
     Message: Model<any> | null;
     Subject: Model<any> | null;
     Score: Model<any> | null;
+    ScoreLog: Model<any> | null;
     ScoresTable: Model<any> | null;
     Post: Model<any> | null;
     Feed: Model<any> | null;
     Comment: Model<any> | null;
     Semester: Model<any> | null;
-    Test: Model<any> | null;
+    Exam: Model<any> | null;
     init(): Promise<void>;
     disconnect(): Promise<void>;
 }
@@ -47,12 +46,13 @@ class DatabaseConnection implements IDBConnection {
     public Message: Model<any> | null = null;
     public Subject: Model<any> | null = null;
     public Score: Model<any> | null = null;
+    public ScoreLog: Model<any> | null = null;
     public ScoresTable: Model<any> | null = null;
     public Post: Model<any> | null = null;
     public Feed: Model<any> | null = null;
     public Comment: Model<any> | null = null;
     public Semester: Model<any> | null = null;
-    public Test: Model<any> | null = null;
+    public Exam: Model<any> | null = null;
 
     async init(): Promise<void> {
         if (this.initiated) {
@@ -84,9 +84,9 @@ class DatabaseConnection implements IDBConnection {
                 SubjectSchema
             );
             this.Score = this.connection.model(DB_SCHEMA.SCORE, ScoreSchema);
-            this.ScoresTable = this.connection.model(
-                DB_SCHEMA.SCORES_TABLE,
-                ScoresTableSchema
+            this.ScoreLog = this.connection.model(
+                DB_SCHEMA.SCORE_LOG,
+                ScoreLogSchema
             );
             this.Post = this.connection.model(DB_SCHEMA.POST, PostSchema);
             this.Feed = this.connection.model(DB_SCHEMA.FEED, FeedSchema);
@@ -98,9 +98,9 @@ class DatabaseConnection implements IDBConnection {
                 DB_SCHEMA.SEMESTER,
                 SemesterSchema
             );
-            this.Test = this.connection.model(
+            this.Exam = this.connection.model(
                 DB_SCHEMA.TEST_SCHEMA,
-                TestSchema
+                ExamSchema
             );
 
             this.initiated = true;

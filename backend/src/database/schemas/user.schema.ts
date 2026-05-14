@@ -1,14 +1,15 @@
 import { Schema } from 'mongoose';
-function toLower(v: string) {
-    return v.toLowerCase();
-}
+import { BaseSchema } from './base.schema';
+import { toLower } from '../../utils';
+import { UserRole } from '../../config/constants';
 
 export const UserSchema: Schema = new Schema({
+    ...BaseSchema,
     name: { type: String },
     role: {
-        type: String,
+        type: Number,
         enum: {
-            values: ['student', 'teacher', 'admin'],
+            values: [UserRole.STUDENT, UserRole.TEACHER, UserRole.ADMIN],
             message: 'Role {VALUE} is not supported',
         },
         require: true,
@@ -34,5 +35,4 @@ export const UserSchema: Schema = new Schema({
     location: { type: String, default: 'Ha Noi' },
     date_of_birth: { type: Number, default: new Date().getTime() },
     email: { type: String, set: toLower },
-    vnu_id: { type: String, index: { unique: true }, dropDups: true },
 });

@@ -1,6 +1,6 @@
 import styled, { keyframes } from "styled-components";
 
-const theme = {
+export const theme = {
   primary: "#3a0ca3",
   primaryLight: "#4361ee",
   secondary: "#7209b7",
@@ -25,27 +25,27 @@ const theme = {
   transition: "all 0.3s ease",
 };
 
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
+export const fadeIn = keyframes`
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  `;
 
-const fadeInUp = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
+export const fadeInUp = keyframes`
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  `;
 
-const Container = styled.div`
+export const Container = styled.div`
   display: grid;
   grid-template-columns: ${theme.sidebarWidth} 1fr;
   grid-template-rows: ${theme.headerHeight} 1fr;
@@ -56,46 +56,7 @@ const Container = styled.div`
   }
 `;
 
-const Wrapper = styled.div<{ $active?: boolean }>`
-  grid-row: 1 / 3;
-  background: linear-gradient(180deg, ${theme.dark} 0%, #16213e 100%);
-  color: white;
-  overflow-y: auto;
-  transition: ${theme.transition};
-  box-shadow: ${theme.shadow};
-  z-index: 1000;
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 1px;
-    background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.1),
-      transparent
-    );
-  }
-
-  @media (max-width: 992px) {
-    transform: translateX(-100%);
-    position: fixed;
-    height: 100vh;
-    z-index: 1001;
-
-    ${({ $active }) =>
-      $active &&
-      `
-      transform: translateX(0);
-      box-shadow: ${theme.shadowLg};
-    `}
-  }
-`;
-
-const Logo = styled.div`
+export const Logo = styled.div`
   padding: 24px 20px;
   text-align: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -122,11 +83,11 @@ const Logo = styled.div`
   }
 `;
 
-const NavMenu = styled.div`
+export const NavMenu = styled.div`
   padding: 10px 0;
 `;
 
-const MenuHeading = styled.div`
+export const MenuHeading = styled.div`
   padding: 16px 25px 8px;
   font-size: 11px;
   text-transform: uppercase;
@@ -135,7 +96,7 @@ const MenuHeading = styled.div`
   font-weight: 500;
 `;
 
-const NavItem = styled.div<{ $active?: boolean }>`
+export const NavItem = styled.div<{ $active?: boolean }>`
   padding: 12px 25px;
   display: flex;
   align-items: center;
@@ -176,9 +137,9 @@ const NavItem = styled.div<{ $active?: boolean }>`
   ${({ $active }) =>
     $active &&
     `
-    background: linear-gradient(90deg, rgba(67, 97, 238, 0.2), transparent);
-    font-weight: 500;
-  `}
+      background: linear-gradient(90deg, rgba(67, 97, 238, 0.2), transparent);
+      font-weight: 500;
+    `}
 
   i {
     width: 24px;
@@ -193,24 +154,7 @@ const NavItem = styled.div<{ $active?: boolean }>`
   }
 `;
 
-const Header = styled.div`
-  grid-column: 2;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 30px;
-  box-shadow: ${theme.shadowSm};
-  z-index: 100;
-  position: sticky;
-  top: 0;
-
-  @media (max-width: 992px) {
-    padding: 0 20px;
-  }
-`;
-
-const SearchBar = styled.div`
+export const SearchBar = styled.div`
   display: flex;
   align-items: center;
   background-color: ${theme.light};
@@ -245,7 +189,7 @@ const SearchBar = styled.div`
   }
 `;
 
-const HeaderActions = styled.div`
+export const HeaderActions = styled.div`
   display: flex;
   align-items: center;
 
@@ -254,7 +198,7 @@ const HeaderActions = styled.div`
   }
 `;
 
-const Notification = styled.div`
+export const Notification = styled.div`
   position: relative;
   margin: 0 15px;
   cursor: pointer;
@@ -286,7 +230,7 @@ const Notification = styled.div`
   }
 `;
 
-const Badge = styled.div`
+export const Badge = styled.div`
   position: absolute;
   top: 3px;
   right: 3px;
@@ -304,7 +248,7 @@ const Badge = styled.div`
   font-weight: 600;
 `;
 
-const UserProfile = styled.div`
+export const UserProfile = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -318,7 +262,7 @@ const UserProfile = styled.div`
   }
 `;
 
-const ProfileImg = styled.div`
+export const ProfileImg = styled.div`
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -337,7 +281,7 @@ const ProfileImg = styled.div`
   }
 `;
 
-const UserInfo = styled.div`
+export const UserInfo = styled.div`
   display: flex;
   flex-direction: column;
 
@@ -346,12 +290,12 @@ const UserInfo = styled.div`
   }
 `;
 
-const UserName = styled.div`
+export const UserName = styled.div`
   font-weight: 600;
   font-size: 14px;
 `;
 
-const UserRole = styled.div`
+export const UserRole = styled.div`
   font-size: 12px;
   color: ${theme.textLight};
 
@@ -360,7 +304,7 @@ const UserRole = styled.div`
   }
 `;
 
-const MainContent = styled.div`
+export const MainContent = styled.div`
   grid-column: 2;
   padding: 25px 30px;
   overflow-y: auto;
@@ -370,7 +314,7 @@ const MainContent = styled.div`
   }
 `;
 
-const PageTitle = styled.div`
+export const PageTitle = styled.div`
   margin-bottom: 30px;
   display: flex;
   justify-content: space-between;
@@ -378,7 +322,7 @@ const PageTitle = styled.div`
   animation: ${fadeIn} 0.5s ease;
 `;
 
-const Title = styled.div`
+export const Title = styled.div`
   font-size: 28px;
   font-weight: 700;
   color: ${theme.dark};
@@ -401,7 +345,7 @@ const Title = styled.div`
   }
 `;
 
-const ActionButtons = styled.div`
+export const ActionButtons = styled.div`
   display: flex;
 
   .btn {
@@ -417,7 +361,7 @@ const ActionButtons = styled.div`
   }
 `;
 
-const StatsCards = styled.div`
+export const StatsCards = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 25px;
@@ -433,7 +377,7 @@ const StatsCards = styled.div`
   }
 `;
 
-const StatCard = styled.div<{ $variant?: number }>`
+export const StatCard = styled.div<{ $variant?: number }>`
   background-color: white;
   border-radius: ${theme.radius};
   padding: 28px;
@@ -482,14 +426,14 @@ const StatCard = styled.div<{ $variant?: number }>`
   }
 `;
 
-const CardHeader = styled.div`
+export const CardHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 18px;
 `;
 
-const CardIcon = styled.div<{ $color?: string }>`
+export const CardIcon = styled.div<{ $color?: string }>`
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -516,20 +460,20 @@ const CardIcon = styled.div<{ $color?: string }>`
   }};
 `;
 
-const CardValue = styled.div`
+export const CardValue = styled.div`
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 6px;
   transition: ${theme.transition};
 `;
 
-const CardLabel = styled.div`
+export const CardLabel = styled.div`
   color: ${theme.textLight};
   font-size: 15px;
   font-weight: 500;
 `;
 
-const CardChange = styled.div<{ $positive?: boolean }>`
+export const CardChange = styled.div<{ $positive?: boolean }>`
   display: flex;
   align-items: center;
   font-size: 14px;
@@ -543,7 +487,7 @@ const CardChange = styled.div<{ $positive?: boolean }>`
   }
 `;
 
-const TableCard = styled.div`
+export const TableCard = styled.div`
   background-color: white;
   border-radius: ${theme.radius};
   box-shadow: ${theme.shadowSm};
@@ -553,7 +497,7 @@ const TableCard = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.03);
 `;
 
-const CardTitle = styled.div`
+export const CardTitle = styled.div`
   padding: 24px;
   border-bottom: 1px solid ${theme.border};
   display: flex;
@@ -575,7 +519,7 @@ const CardTitle = styled.div`
   }
 `;
 
-const DataTable = styled.table`
+export const DataTable = styled.table`
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
@@ -626,7 +570,7 @@ const DataTable = styled.table`
   }
 `;
 
-const Status = styled.span<{ $variant?: string }>`
+export const Status = styled.span<{ $variant?: string }>`
   padding: 6px 14px;
   border-radius: 50px;
   font-size: 13px;
@@ -678,7 +622,7 @@ const Status = styled.span<{ $variant?: string }>`
   }
 `;
 
-const Button = styled.button<{ $variant?: string; $size?: string }>`
+export const Button = styled.button<{ $variant?: string; $size?: string }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -729,13 +673,13 @@ const Button = styled.button<{ $variant?: string; $size?: string }>`
     ${({ $variant }) =>
       $variant === "outline"
         ? `
-      background-color: ${theme.primary};
-      color: white;
-      border-color: ${theme.primary};
-    `
+        background-color: ${theme.primary};
+        color: white;
+        border-color: ${theme.primary};
+      `
         : `
-      background: linear-gradient(135deg, ${theme.secondary}, ${theme.primary});
-    `}
+        background: linear-gradient(135deg, ${theme.secondary}, ${theme.primary});
+      `}
     box-shadow: 0 6px 15px rgba(58, 12, 163, 0.2);
   }
 
@@ -750,61 +694,6 @@ const Button = styled.button<{ $variant?: string; $size?: string }>`
   }
 `;
 
-const FasIcon = styled.i`
+export const FasIcon = styled.i`
   font-size: 18px;
 `;
-
-export const Sidebar = () => {
-  return (
-    <Wrapper>
-      <Logo>
-        <h1>
-          <span>HVKTQS</span>
-        </h1>
-      </Logo>
-      <NavMenu>
-        <MenuHeading>Main</MenuHeading>
-        <NavItem $active>
-          <FasIcon className="fas fa-chart-pie" />
-          <span>Dashboard</span>
-        </NavItem>
-        <NavItem>
-          <FasIcon className="fas fa-users" />
-          <span>Users</span>
-        </NavItem>
-        <NavItem>
-          <FasIcon className="fas fa-box" />
-          <span>Products</span>
-        </NavItem>
-        <NavItem>
-          <FasIcon className="fas fa-shopping-cart" />
-          <span>Orders</span>
-        </NavItem>
-
-        <MenuHeading>Reports</MenuHeading>
-        <NavItem>
-          <FasIcon className="fas fa-chart-line" />
-          <span>Analytics</span>
-        </NavItem>
-        <NavItem>
-          <FasIcon className="fas fa-coins" />
-          <span>Sales</span>
-        </NavItem>
-
-        <MenuHeading>Admin</MenuHeading>
-        <NavItem>
-          <FasIcon className="fas fa-cog" />
-          <span>Settings</span>
-        </NavItem>
-        <NavItem>
-          <FasIcon className="fas fa-bell" />
-          <span>Notifications</span>
-        </NavItem>
-        <NavItem>
-          <FasIcon className="fas fa-shield-alt" />
-          <span>Security</span>
-        </NavItem>
-      </NavMenu>
-    </Wrapper>
-  );
-};

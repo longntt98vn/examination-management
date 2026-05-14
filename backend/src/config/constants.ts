@@ -59,11 +59,13 @@ export const DB_SCHEMA = {
     SUBJECT: 'Subject',
     SCORES_TABLE: 'SvScoresTable',
     SCORE: 'SCORE',
+    SCORE_LOG: 'ScoreLog',
     TEST_SCHEMA: 'JustForTesting',
     FEED: 'Feed',
     POST: 'Post',
     COMMENT: 'Comment',
     SEMESTER: 'Semester',
+    EXAM: 'Exam',
 };
 
 export const RES_FORM = (status: number, message?: string, data?: any) => {
@@ -74,3 +76,15 @@ export const RES_FORM = (status: number, message?: string, data?: any) => {
         data: data ? data : undefined,
     };
 };
+
+export enum ScoreStatus {
+    NOT_SIGNED = 0,
+    TEACHER_SIGNED = 1,
+    ADMIN_SIGNED = 2,
+}
+
+export enum UserRole {
+    STUDENT = 0,
+    TEACHER = 1,
+    ADMIN = 2,
+}

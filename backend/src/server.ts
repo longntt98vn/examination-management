@@ -11,8 +11,9 @@ import { logger } from './utils/logger';
 import { transactionsRouter } from './router/transactions.router';
 import cors from 'cors';
 import { candidateRouter } from './router/candidate.router';
-import { examRouter } from './router/exam.router';
-import { scoreRouter } from './router/score.router';
+import { examRouter } from './router/exam/exam.router';
+import { scoreRouter } from './router/score/score.router';
+import { validateToken } from './services/auth-middleware/auth';
 
 const { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } = StatusCodes;
 
@@ -66,7 +67,7 @@ export const createServer = async (): Promise<Application> => {
     app.use('/api/transactions', authenticateApiKey, transactionsRouter);
     app.use('/api/candidate', authenticateApiKey, candidateRouter);
     app.use('/api/exam', authenticateApiKey, examRouter);
-    app.use('/api/score', authenticateApiKey, scoreRouter);
+    app.use('/api/score', validateToken, scoreRouter);
 
     // For everything else
     app.use((_req, res) =>

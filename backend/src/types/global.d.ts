@@ -11,12 +11,13 @@ declare global {
         Message: Model<any>;
         Subject: Model<any>;
         Score: Model<any>;
+        ScoreLog: Model<any>;
         ScoresTable: Model<any>;
         Post: Model<any>;
         Feed: Model<any>;
         Comment: Model<any>;
         Semester: Model<any>;
-        Test: Model<any>;
+        Exam: Model<any>;
         init(): Promise<void>;
         disconnect(): Promise<void>;
     };
