@@ -8,10 +8,17 @@ import { logger } from '../../utils/logger';
 import { evatuateTransaction } from '../../utils/fabric';
 import { Contract } from 'fabric-network';
 const { BAD_REQUEST, ACCEPTED, INTERNAL_SERVER_ERROR, NOT_FOUND } = StatusCodes;
+import { DBConnection } from '../../utils/db-connection';
+import { generateExamHashCode } from '../../utils/hash-code';
+import { checkUserExist } from '../user/user.service';
+import { checkSemesterExist } from '../semester/semester.service';
+import { checkSubjectExist } from '../subject/subject.service';
+import {
+    createCandidate,
+    updateCandidates,
+} from '../../services/candidate.service';
 
-const db = global.DBConnection;
-
-export const createExam = async (req: Request, res: Response) => {
+export const createExamOnChain = async (req: Request, res: Response) => {
     const mspId = req.user as string;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -39,15 +46,82 @@ export const createExam = async (req: Request, res: Response) => {
     });
 };
 
+export const createExam = async (req: Request, res: Response) => {
+    try {
+        const [semester, subject, teacher] = await Promise.all([
+            checkSemesterExist(req.body.semesterId),
+            checkSubjectExist(req.body.subjectId),
+            checkUserExist(req.body.teacherId),
+        ]);
+        if (!semester || !subject || !teacher) {
+            return res.status(BAD_REQUEST).json({
+                status: getReasonPhrase(BAD_REQUEST),
+                message: 'Semester, subject or teacher not found',
+            });
+        }
+
+        const mspId = req.user as string;
+        const submitQueue = req.app.locals.jobq as Queue;
+        const now = Date.now();
+
+        const exam = await DBConnection.Exam?.create({
+            semester: req.body.semesterId,
+            subject: req.body.subjectId,
+            teacher: req.body.teacherId,
+            name: req.body.name,
+            exam_date: req.body.examDate,
+            room_number: req.body.roomNumber,
+            created_at: now,
+            updated_at: now,
+        });
+
+        const hashCode = generateExamHashCode(
+            exam._id.toString(),
+            req.body.semesterId,
+            req.body.subjectId,
+            req.body.teacherId,
+            req.body.name,
+            req.body.examDate,
+            req.body.roomNumber,
+            now
+        );
+
+        exam.hash = hashCode;
+        await exam.save();
+
+        const jobId = await addSubmitTransactionJob(
+            submitQueue,
+            mspId,
+            'CreateExam',
+            exam._id.toString(),
+            hashCode
+        );
+
+        return res.status(ACCEPTED).json({
+            status: getReasonPhrase(ACCEPTED),
+            message: 'Exam created and blockchain job queued',
+            data: exam,
+            blockchainJobId: jobId,
+        });
+    } catch (error) {
+        logger.error({ error }, 'Error in createExam');
+        return res.status(INTERNAL_SERVER_ERROR).json({
+            status: getReasonPhrase(INTERNAL_SERVER_ERROR),
+            message: 'Failed to create exam',
+            error: error instanceof Error ? error.message : 'Unknown error',
+        });
+    }
+};
+
 export const getExamById = async (req: Request, res: Response) => {
     const examId = req.params.examId;
 
     try {
         // Query exam với populate các references
-        const exam = await db.Exam.findById(examId)
-            .populate('semester_ref') // Populate semester
-            .populate('subject_ref') // Populate subject
-            .populate('student_refs') // Populate students
+        const exam = await DBConnection.Exam?.findById(examId)
+            .populate('semester') // Populate semester
+            .populate('subject') // Populate subject
+            .populate('teacher') // Populate teacher
             .lean();
 
         if (!exam) {
@@ -58,15 +132,17 @@ export const getExamById = async (req: Request, res: Response) => {
             });
         }
 
-        // Query tất cả scores liên quan đến exam này
-        const scores = await db.Score.find({
-            exam_id: examId,
-        }).lean();
+        const candidates = await DBConnection.Candidate?.find({
+            exam: examId,
+        })
+            .populate('user')
+            .populate('score')
+            .lean();
 
         // Kết hợp data
         const examWithScores = {
             ...exam,
-            scores: scores,
+            candidates: candidates,
         };
 
         return res.status(200).json(examWithScores);
@@ -85,8 +161,26 @@ export const getExamById = async (req: Request, res: Response) => {
 };
 
 export const getExams = async (req: Request, res: Response) => {
-    const exams = await db.Exam.find();
+    const exams = await DBConnection.Exam?.find()
+        .populate('semester')
+        .populate('subject')
+        .populate('teacher')
+        .lean();
     return res.status(200).json(exams);
+};
+
+export const updateExam = async (req: Request, res: Response) => {
+    const examId = req.params.examId;
+    const exam = await DBConnection.Exam?.findByIdAndUpdate(examId, req.body, {
+        new: true,
+    });
+    return res.status(200).json(exam);
+};
+
+export const deleteExam = async (req: Request, res: Response) => {
+    const examId = req.params.examId;
+    await DBConnection.Exam?.findByIdAndDelete(examId);
+    return res.status(200).json({ message: 'Exam deleted successfully' });
 };
 
 export const getExamsOnChain = async (req: Request, res: Response) => {

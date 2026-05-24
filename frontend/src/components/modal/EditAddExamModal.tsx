@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  DatePicker,
   Flex,
   Input,
   Row,
@@ -10,142 +11,195 @@ import {
   type TableColumnsType,
 } from "antd";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { MODAL_TYPES, useModal } from "../../providers/ModalProvider";
 import { CustomModal } from "../modal/CustomModal";
 import Search from "antd/es/input/Search";
+import { useEditAddExamModal } from "./hooks/useEditAddExamModal";
+import type { User } from "../../constants/types";
 
 type Props = {
-  open: boolean;
-  onClose: () => void;
+  examId?: string;
 };
 
-export const EditAddExamModal = () => {
+export const EditAddExamModal = ({ examId }: Props) => {
   const { modals, openModal, closeModal } = useModal();
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      examName: "",
-      subject: "",
-      date: new Date().toISOString().split("T")[0],
-      time: new Date().toISOString().split("T")[1],
-      room: "",
-      teacher: "",
-    },
-  });
-  const getExam = () => {};
-  const addExam = (data: any) => {};
-  const editExam = (data: any) => {};
+    methods,
+    teachers,
+    students,
+    semesters,
+    subjects,
+    onSubmit,
+    candidates,
+    setCandidates,
+  } = useEditAddExamModal({ examId });
+  const { register, handleSubmit, control } = methods;
+  const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
 
-  const onSubmit = (data: any) => {
-    if (modals[MODAL_TYPES.EXAM_ADD_EDIT].data.examId) {
-      editExam(data);
-    } else {
-      addExam(data);
-    }
-  };
-
-  const columns: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<User> = [
     {
       title: "Chọn",
-      width: 10,
-      render: (_, record) => <Checkbox checked={false} />,
+      render: (_, record) => (
+        <Checkbox
+          checked={selectedStudents.includes(record._id)}
+          onChange={(e) => {
+            if (e.target.checked) {
+              setSelectedStudents([...selectedStudents, record._id]);
+            } else {
+              setSelectedStudents(
+                selectedStudents.filter((id) => id !== record._id),
+              );
+            }
+          }}
+        />
+      ),
     },
     {
-      title: "MSSV",
-      dataIndex: "age",
-      width: 10,
+      title: "STT",
+      render: (_, __, index) => index + 1,
     },
     {
       title: "Họ và tên",
       dataIndex: "name",
-      width: 20,
     },
     {
-      title: "Lớp",
-      dataIndex: "address",
-      width: 20,
+      title: "Ngày sinh",
+      dataIndex: "date_of_birth",
+      render: (_, record) => {
+        return record.date_of_birth
+          ? new Date(record.date_of_birth).toLocaleDateString()
+          : "";
+      },
     },
     {
-      title: "Khoa",
-      dataIndex: "address",
-      width: 20,
+      title: "Địa chỉ",
+      dataIndex: "location",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "phone_number",
     },
   ];
-
-  useEffect(() => {
-    if (
-      modals[MODAL_TYPES.EXAM_ADD_EDIT].isOpen &&
-      modals[MODAL_TYPES.EXAM_ADD_EDIT].data.examId
-    ) {
-      getExam();
-    }
-  }, [modals[MODAL_TYPES.EXAM_ADD_EDIT].isOpen]);
 
   return (
     <CustomModal
       open={modals[MODAL_TYPES.EXAM_ADD_EDIT].isOpen}
-      onOk={() => closeModal(MODAL_TYPES.EXAM_ADD_EDIT)}
-      onCancel={() => closeModal(MODAL_TYPES.EXAM_ADD_EDIT)}
+      onOk={() => {
+        onSubmit(methods.getValues());
+        // closeModal(MODAL_TYPES.EXAM_ADD_EDIT);
+      }}
+      onCancel={() => {
+        closeModal(MODAL_TYPES.EXAM_ADD_EDIT);
+        openModal(MODAL_TYPES.EXAM_LIST);
+      }}
       title="Thêm đợt thi"
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <Flex vertical gap={4}>
           <label>Tên đợt thi</label>
-          <Input {...register("examName")} />
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => <Input {...field} />}
+          />
           <label>Môn thi</label>
-          <Input {...register("subject")} />
+          <Controller
+            name="subjectId"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                allowClear
+                style={{ width: "100%" }}
+                placeholder="Please select"
+                options={subjects.map((subject) => ({
+                  value: subject._id,
+                  label: subject.subject_name,
+                }))}
+              />
+            )}
+          />
+
+          <label>Học kỳ</label>
+          <Controller
+            name="semesterId"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                allowClear
+                options={semesters.map((semester) => ({
+                  value: semester._id,
+                  label: semester.semester_name,
+                }))}
+                style={{ height: 32, width: "100%" }}
+              />
+            )}
+          />
           <label>Ngày thi</label>
-          <Input {...register("date")} type="date" />
-          <label>Giờ thi</label>
-          <Input {...register("time")} type="time" />
+          <Controller
+            name="examDate"
+            control={control}
+            render={({ field }) => (
+              <DatePicker picker="date" style={{ width: "100%" }} {...field} />
+            )}
+          />
           <label>Phòng thi</label>
-          <Input {...register("room")} />
+          <Controller
+            name="roomNumber"
+            control={control}
+            render={({ field }) => <Input {...field} />}
+          />
           <label>Giáo viên chấm</label>
-          <Search
-            allowClear
-            enterButton
-            onSearch={() => {}}
-            style={{ height: 32, width: "100%" }}
-            {...register("teacher")}
+          <Controller
+            name="teacherId"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                allowClear
+                style={{ height: 32, width: "100%" }}
+                options={teachers.map((teacher) => ({
+                  value: teacher._id,
+                  label: teacher.name,
+                }))}
+              />
+            )}
           />
           <label>Sinh viên thi</label>
-          <Button
-            type="primary"
-            style={{ width: 120 }}
-            onClick={() => {
-              openModal(MODAL_TYPES.STUDENT_LIST, {
-                examId: modals[MODAL_TYPES.EXAM_ADD_EDIT].data.examId || 1234,
-              });
-            }}
-          >
-            Thêm sinh viên
-          </Button>
-          <Table<DataType>
+          <Flex gap={16}>
+            <Button
+              type="primary"
+              style={{ width: 120 }}
+              onClick={() => {
+                openModal(MODAL_TYPES.STUDENT_LIST, {
+                  examId: modals[MODAL_TYPES.EXAM_ADD_EDIT].data.examId || 1234,
+                  students: students,
+                  selectedStudents: candidates,
+                  setSelectedStudents: setCandidates,
+                });
+              }}
+            >
+              Thêm sinh viên
+            </Button>
+            <Button type="default" style={{ width: 120 }} onClick={() => {}}>
+              Xóa sinh viên
+            </Button>
+          </Flex>
+          <Table<User>
             columns={columns}
-            dataSource={dataSource}
+            dataSource={candidates}
             pagination={{ pageSize: 50 }}
             scroll={{ y: 55 * 5 }}
+            rowKey={"_id"}
           />
         </Flex>
       </form>
     </CustomModal>
   );
 };
-
-interface DataType {
-  key: React.Key;
-  name: string;
-  age: number;
-  address: string;
-}
-
-const dataSource = Array.from({ length: 100 }).map<DataType>((_, i) => ({
-  key: i,
-  name: `Edward King ${i}`,
-  age: 32,
-  address: `London, Park Lane no. ${i}`,
-}));

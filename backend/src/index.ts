@@ -22,6 +22,7 @@ import { logger } from './utils/logger';
 import { createServer } from './server';
 import { isMaxmemoryPolicyNoeviction } from './utils/redis';
 import { Queue, QueueScheduler, Worker } from 'bullmq';
+import { DBConnection } from './utils/db-connection';
 
 let jobQueue: Queue | undefined;
 let jobQueueWorker: Worker | undefined;
@@ -34,6 +35,9 @@ async function main() {
             'Invalid redis configuration: redis instance must have the setting maxmemory-policy=noeviction'
         );
     }
+
+    logger.info('Initializing database connection');
+    await DBConnection.init();
 
     logger.info('Creating REST server');
     const app = await createServer();

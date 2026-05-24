@@ -1,15 +1,16 @@
+import { Queue } from 'bullmq';
 import { Request, Response } from 'express';
 import { Contract } from 'fabric-network';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
-import { evatuateTransaction } from '../utils/fabric';
-import { logger } from '../utils/logger';
-import { addSubmitTransactionJob } from '../utils/jobs';
-import { Queue } from 'bullmq';
+import { DBConnection } from '../utils/db-connection';
 import { ContractError } from '../utils/errors';
+import { evatuateTransaction } from '../utils/fabric';
+import { addSubmitTransactionJob } from '../utils/jobs';
+import { logger } from '../utils/logger';
 
-const { NOT_FOUND, INTERNAL_SERVER_ERROR, ACCEPTED } = StatusCodes;
+const { NOT_FOUND, INTERNAL_SERVER_ERROR, ACCEPTED, BAD_REQUEST } = StatusCodes;
 
-export const createScore = async (req: Request, res: Response) => {
+export const createScoreOnChain = async (req: Request, res: Response) => {
     const mspId = req.user as string;
 
     const submitQueue = req.app.locals.jobq as Queue;
@@ -28,7 +29,7 @@ export const createScore = async (req: Request, res: Response) => {
     });
 };
 
-export const getScore = async (req: Request, res: Response) => {
+export const getScoreOnChain = async (req: Request, res: Response) => {
     const scoreId = req.params.scoreId;
     logger.debug('Read score request received for score ID %s', scoreId);
 
@@ -65,7 +66,7 @@ export const getScore = async (req: Request, res: Response) => {
     }
 };
 
-export const getAllScores = async (req: Request, res: Response) => {
+export const getAllScoresOnChain = async (req: Request, res: Response) => {
     try {
         const mspId = req.user as string;
         const contract = req.app.locals[mspId]?.scoreContract as Contract;

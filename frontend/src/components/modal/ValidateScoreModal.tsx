@@ -4,30 +4,86 @@ import {
   Flex,
   Select,
   Table,
+  Tooltip,
   type TableColumnsType,
 } from "antd";
 import Search from "antd/es/input/Search";
-import { useEffect, useState } from "react";
-import { CustomModal } from "../modal/CustomModal";
+import { ScoreStatusMap } from "../../constants";
+import type { Candidate } from "../../constants/types";
 import { MODAL_TYPES, useModal } from "../../providers/ModalProvider";
-
-type Props = {
-  open: boolean;
-  onClose: () => void;
-};
+import { CustomModal } from "../modal/CustomModal";
+import { useValidateScoreModal } from "./hooks/useValidateScoreModal";
 
 export const ValidateScoreModal = () => {
   const { modals, openModal, closeModal } = useModal();
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const filteredOptions = OPTIONS.filter((o) => !selectedItems.includes(o));
+  const { candidates, selectedItems, setSelectedItems, onOk } =
+    useValidateScoreModal();
 
-  const getExams = () => {};
-
-  useEffect(() => {
-    if (modals[MODAL_TYPES.VALIDATE_SCORE].isOpen) {
-      getExams();
-    }
-  }, [modals[MODAL_TYPES.VALIDATE_SCORE].isOpen]);
+  const columns: TableColumnsType<Candidate> = [
+    {
+      title: "Chọn",
+      width: 70,
+      render: (_, record) => (
+        <Checkbox
+          checked={selectedItems.includes(record._id)}
+          onChange={(e) => {
+            setSelectedItems(
+              e.target.checked
+                ? [...selectedItems, record._id]
+                : selectedItems.filter((item) => item !== record._id),
+            );
+          }}
+        />
+      ),
+    },
+    {
+      title: "MSV",
+      render: (_, record) => {
+        return (
+          <Tooltip title={record.user._id}>
+            {record.user._id.slice(0, 4) + "..." + record.user._id.slice(-4)}
+          </Tooltip>
+        );
+      },
+    },
+    {
+      title: "Họ và tên",
+      render: (_, record) => {
+        return record.user.name;
+      },
+    },
+    {
+      title: "Điểm",
+      width: 70,
+      render: (_, record) => {
+        return record.score?.value.toString();
+      },
+    },
+    {
+      title: "Trạng thái",
+      render: (_, record) => {
+        return ScoreStatusMap[record.score?.status];
+      },
+    },
+    {
+      title: "Thao tác",
+      render: (_, record) => (
+        <Flex>
+          <Button type="link" onClick={() => {}}>
+            Ghi chú
+          </Button>
+          <Button
+            type="link"
+            onClick={() => {
+              openModal(MODAL_TYPES.SCORE_HISTORY, { candidateId: record._id });
+            }}
+          >
+            Lịch sử
+          </Button>
+        </Flex>
+      ),
+    },
+  ];
 
   return (
     <CustomModal
@@ -37,96 +93,39 @@ export const ValidateScoreModal = () => {
       title="Đối soát và phê duyệt điểm"
     >
       <Flex>
-        <Button type="primary" onClick={() => {}}>
-          Ký số và phê duyệt
+        <Button type="primary" onClick={onOk}>
+          Phê duyệt điểm
         </Button>
       </Flex>
       <Flex style={{ margin: "16px 0" }}>
-        <Search
-          placeholder="MSV hoặc tên"
+        <Select
           allowClear
-          enterButton
-          onSearch={() => {}}
-          style={{ height: 32, width: "50%", marginRight: 16 }}
+          placeholder="Lọc theo sinh viên"
+          style={{ height: 32, width: "100%" }}
+          options={candidates.map((candidate) => ({
+            value: candidate._id,
+            label: candidate.user.name,
+          }))}
         />
 
         <Select
-          mode="multiple"
-          placeholder="Lọc theo khoa"
-          value={selectedItems}
-          onChange={setSelectedItems}
-          style={{ height: 32, width: "50%" }}
-          options={filteredOptions.map((item) => ({
-            value: item,
-            label: item,
+          allowClear
+          placeholder="Lọc theo trạng thái"
+          style={{ height: 32, width: "100%" }}
+          options={candidates.map((candidate) => ({
+            value: candidate.score?.status,
+            label: ScoreStatusMap[candidate.score?.status],
           }))}
         />
       </Flex>
 
-      <Table<DataType>
+      <Table<Candidate>
+        rowKey="_id"
         columns={columns}
-        dataSource={dataSource}
+        dataSource={candidates}
         pagination={{ pageSize: 50 }}
         scroll={{ y: 55 * 5 }}
       />
     </CustomModal>
   );
 };
-
-interface DataType {
-  key: React.Key;
-  name: string;
-  age: number;
-  address: string;
-}
-
-const columns: TableColumnsType<DataType> = [
-  {
-    title: "Chọn",
-    width: 10,
-    render: (_, record) => <Checkbox checked={false} />,
-  },
-  {
-    title: "MSSV",
-    dataIndex: "studentId",
-    width: 20,
-  },
-  {
-    title: "Họ và tên",
-    dataIndex: "name",
-    width: 20,
-  },
-  {
-    title: "Điểm",
-    dataIndex: "score",
-    width: 20,
-  },
-  {
-    title: "Trạng thái",
-    dataIndex: "status",
-    width: 20,
-  },
-  {
-    title: "Thao tác",
-    width: 20,
-    render: (_, record) => (
-      <Flex>
-        <Button type="link" onClick={() => {}}>
-          Ghi chú
-        </Button>
-        <Button type="link" onClick={() => {}}>
-          Lịch sử
-        </Button>
-      </Flex>
-    ),
-  },
-];
-
-const dataSource = Array.from({ length: 100 }).map<DataType>((_, i) => ({
-  key: i,
-  name: `Edward King ${i}`,
-  age: 32,
-  address: `London, Park Lane no. ${i}`,
-}));
-
-const OPTIONS = ["Apples", "Nails", "Bananas", "Helicopters"];

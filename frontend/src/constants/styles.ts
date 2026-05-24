@@ -697,3 +697,98 @@ export const Button = styled.button<{ $variant?: string; $size?: string }>`
 export const FasIcon = styled.i`
   font-size: 18px;
 `;
+
+export const Wrapper = styled.div`
+  background: rgb(214, 214, 214);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+`;
+
+export const StyledA = styled.a`
+  text-decoration: none;
+  color: black;
+`;
+
+export const LoginContainer = styled.div`
+  width: 1000px;
+  height: 550px;
+  margin: 30px auto;
+  display: flex;
+  background: rgb(214, 214, 214);
+  border-radius: 10px;
+  box-shadow:
+    5px 5px 7px gray,
+    -5px -5px 7px gray;
+`;
+
+export const Label = styled.label`
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 8px;
+`;
+export const LoginTitle = styled.h1`
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bolder;
+  border-bottom: 1px solid gray;
+`;
+
+export const Input = styled.input`
+  width: 100%;
+  padding: 8px;
+  margin: 8px;
+  outline: none;
+  border: none;
+  border: 1px solid gray;
+  border-radius: 5px;
+`;
+export const LognButton = styled.button`
+    width: 250px;
+    margin: 8px;
+    padding: 8px;
+    background: purple;
+    outline: none;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-size: 17px;
+    cursor: pointer;
+    transition: 0.5s;
+
+    &:hover span {
+    padding-right: 30px;
+
+    &:hover span:after {
+    opacity: 1;
+    right: 0;
+  }
+  `;
+export const ButtonSpan = styled.span`
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+
+  &:after {
+    content: "\00bb";
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+  }
+`;
+
+export const Hr = styled.hr`
+  border-top: 2px solid purple;
+`;
+export const Pic = styled.div`
+  width: 75%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: violet;
+`;

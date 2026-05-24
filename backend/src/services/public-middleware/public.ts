@@ -1,13 +1,16 @@
 import path from 'path';
 import { Request, Response } from 'express';
 function fGetPublicData(req: Request, res: Response) {
+    const filename = Array.isArray(req.params.filename) 
+        ? req.params.filename[0] 
+        : req.params.filename;
     let filePath = path.resolve(
         __dirname,
         '..',
         '..',
         'public',
         'data',
-        req.params.filename
+        filename
     );
     // res.status(200);
     res.download(filePath, function (err) {

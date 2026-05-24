@@ -1,8 +1,17 @@
-import { Button, Flex, Select, Table, type TableColumnsType } from "antd";
+import {
+  Button,
+  Flex,
+  Select,
+  Table,
+  Tooltip,
+  type TableColumnsType,
+} from "antd";
 import Search from "antd/es/input/Search";
 import { useState } from "react";
 import { CustomModal } from "../modal/CustomModal";
 import { MODAL_TYPES, useModal } from "../../providers/ModalProvider";
+import { useExamListModal } from "./hooks/useExamListModal";
+import type { Exam } from "../../constants/types";
 
 type Props = {
   open: boolean;
@@ -12,38 +21,52 @@ type Props = {
 export const ExamListModal = () => {
   const { modals, openModal, closeModal } = useModal();
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const filteredOptions = OPTIONS.filter((o) => !selectedItems.includes(o));
+  const { exams, semesters } = useExamListModal();
 
-  const columns: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<Exam> = [
     {
-      title: "MSSV",
-      dataIndex: "age",
-      width: 10,
+      title: "Mã đợt thi",
+      render: (_, record) => {
+        return (
+          <Tooltip title={record._id}>
+            {record._id.slice(0, 4) + "..." + record._id.slice(-4)}
+          </Tooltip>
+        );
+      },
     },
     {
-      title: "Họ và tên",
-      dataIndex: "name",
-      width: 20,
+      title: "Học kỳ",
+      render: (_, record) => {
+        return record.semester.semester_name;
+      },
     },
     {
-      title: "Lớp",
-      dataIndex: "address",
-      width: 20,
+      title: "Môn thi",
+      render: (_, record) => {
+        return record.subject.subject_name;
+      },
     },
     {
-      title: "Khoa",
-      dataIndex: "address",
-      width: 20,
+      title: "Ngày thi",
+      render: (_, record) => {
+        return record.exam_date;
+      },
+    },
+    {
+      title: "Phòng thi",
+      render: (_, record) => {
+        return record.room_number;
+      },
     },
     {
       title: "Thao tác",
-      width: 20,
+      width: 200,
       render: (_, record) => (
         <Flex>
           <Button
             type="link"
             onClick={() => {
-              openModal(MODAL_TYPES.EXAM_ADD_EDIT, { examId: record.key });
+              openModal(MODAL_TYPES.EXAM_ADD_EDIT, { examId: record._id });
             }}
           >
             Chi tiết
@@ -51,7 +74,7 @@ export const ExamListModal = () => {
           <Button
             type="link"
             onClick={() => {
-              openModal(MODAL_TYPES.INPUT_SCORES, { examId: record.key });
+              openModal(MODAL_TYPES.INPUT_SCORES, { examId: record._id });
             }}
           >
             Chấm điểm
@@ -59,7 +82,7 @@ export const ExamListModal = () => {
           <Button
             type="link"
             onClick={() => {
-              openModal(MODAL_TYPES.VALIDATE_SCORE, { examId: record.key });
+              openModal(MODAL_TYPES.VALIDATE_SCORE, { examId: record._id });
             }}
           >
             Phê duyệt điểm
@@ -79,7 +102,10 @@ export const ExamListModal = () => {
       <Flex justify="end" style={{ marginBottom: 16 }}>
         <Button
           type="primary"
-          onClick={() => openModal(MODAL_TYPES.EXAM_ADD_EDIT)}
+          onClick={() => {
+            closeModal(MODAL_TYPES.EXAM_LIST);
+            openModal(MODAL_TYPES.EXAM_ADD_EDIT);
+          }}
         >
           Tạo đợt thi mới
         </Button>
@@ -100,35 +126,20 @@ export const ExamListModal = () => {
           value={selectedItems}
           onChange={setSelectedItems}
           style={{ height: 32, width: "50%" }}
-          options={filteredOptions.map((item) => ({
-            value: item,
-            label: item,
+          options={semesters.map((semester) => ({
+            value: semester,
+            label: semester,
           }))}
         />
       </Flex>
 
-      <Table<DataType>
+      <Table<Exam>
         columns={columns}
-        dataSource={dataSource}
+        dataSource={exams}
         pagination={{ pageSize: 50 }}
         scroll={{ y: 55 * 5 }}
+        rowKey="_id"
       />
     </CustomModal>
   );
 };
-
-interface DataType {
-  key: React.Key;
-  name: string;
-  age: number;
-  address: string;
-}
-
-const dataSource = Array.from({ length: 100 }).map<DataType>((_, i) => ({
-  key: i,
-  name: `Edward King ${i}`,
-  age: 32,
-  address: `London, Park Lane no. ${i}`,
-}));
-
-const OPTIONS = ["Apples", "Nails", "Bananas", "Helicopters"];

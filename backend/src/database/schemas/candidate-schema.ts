@@ -1,16 +1,19 @@
 import { Schema } from 'mongoose';
+import { BaseSchemaDefinition } from './base.schema';
+import { CandidateStatus, DB_SCHEMA } from '../../config/constants';
+import { ObjectId } from 'mongodb';
+
 const CandidateSchema: Schema = new Schema({
-    id: { type: String, required: true },
-    full_name: { type: String, required: true },
-    date_of_birth: { type: Date, required: true },
-    identity_card: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
-    exam_room: { type: String, required: true },
-    exam_date: { type: Date, required: true },
-    status: { type: String, required: true },
-    registered_by: { type: String, required: false },
-    registered_date: { type: Date, required: false },
+    ...BaseSchemaDefinition,
+    user: { type: ObjectId, ref: DB_SCHEMA.USER, required: true },
+    exam: { type: ObjectId, ref: DB_SCHEMA.EXAM, required: true },
+    score: { type: ObjectId, ref: DB_SCHEMA.SCORE, required: false },
+    status: {
+        type: Number,
+        enum: CandidateStatus,
+        default: CandidateStatus.PENDING,
+    },
+    hash: { type: String, required: false },
 });
 
 export default CandidateSchema;

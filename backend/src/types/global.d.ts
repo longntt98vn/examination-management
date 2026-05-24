@@ -18,6 +18,7 @@ declare global {
         Comment: Model<any>;
         Semester: Model<any>;
         Exam: Model<any>;
+        Candidate: Model<any>;
         init(): Promise<void>;
         disconnect(): Promise<void>;
     };

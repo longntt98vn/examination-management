@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "ext": "ts,json",
+  "ignore": ["src/**/*.spec.ts", "node_modules"],
+  "exec": "yarn build && node --require source-map-support/register --require dotenv/config ./dist"
+}

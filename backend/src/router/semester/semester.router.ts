@@ -1,0 +1,10 @@
+import express, { Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { getAllSemesters } from './semester.service';
+
+export const semesterRouter = express.Router();
+const { OK } = StatusCodes;
+
+semesterRouter.get('/', async (req: Request, res: Response) => {
+    return res.status(OK).json(await getAllSemesters(req, res));
+});

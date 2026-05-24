@@ -58,14 +58,26 @@ export const DB_SCHEMA = {
     MESSAGE: 'Message',
     SUBJECT: 'Subject',
     SCORES_TABLE: 'SvScoresTable',
-    SCORE: 'SCORE',
+    SCORE: 'Score',
     SCORE_LOG: 'ScoreLog',
-    TEST_SCHEMA: 'JustForTesting',
     FEED: 'Feed',
     POST: 'Post',
     COMMENT: 'Comment',
     SEMESTER: 'Semester',
     EXAM: 'Exam',
+    CANDIDATE: 'Candidate',
+};
+
+export const COLLECTION_NAME = {
+    LOGIN_INFO: 'login_info',
+    USER: 'user',
+    CLASS: 'class',
+    SEMESTER: 'semester',
+    SUBJECT: 'subject',
+    SCORE: 'score',
+    SCORE_LOG: 'score_log',
+    EXAM: 'exam',
+    CANDIDATE: 'candidate',
 };
 
 export const RES_FORM = (status: number, message?: string, data?: any) => {
@@ -87,4 +99,10 @@ export enum UserRole {
     STUDENT = 0,
     TEACHER = 1,
     ADMIN = 2,
+}
+
+export enum CandidateStatus {
+    PENDING = 0,
+    APPROVED = 1,
+    REJECTED = 2,
 }

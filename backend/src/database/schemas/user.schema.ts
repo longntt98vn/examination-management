@@ -1,10 +1,10 @@
 import { Schema } from 'mongoose';
-import { BaseSchema } from './base.schema';
+import { BaseSchemaDefinition } from './base.schema';
 import { toLower } from '../../utils';
 import { UserRole } from '../../config/constants';
 
 export const UserSchema: Schema = new Schema({
-    ...BaseSchema,
+    ...BaseSchemaDefinition,
     name: { type: String },
     role: {
         type: Number,

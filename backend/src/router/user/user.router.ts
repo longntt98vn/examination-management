@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import {
     createCandidate,
-    getCandidate
+    getCandidate,
 } from '../../services/candidate.service';
 import { getUsersByConditions } from './user.service';
 

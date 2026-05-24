@@ -21,9 +21,9 @@ export const ScoreHistoryModal = () => {
 
   return (
     <CustomModal
-      open={modals[MODAL_TYPES.VALIDATE_SCORE].isOpen}
-      onOk={() => closeModal(MODAL_TYPES.VALIDATE_SCORE)}
-      onCancel={() => closeModal(MODAL_TYPES.VALIDATE_SCORE)}
+      open={modals[MODAL_TYPES.SCORE_HISTORY].isOpen}
+      onOk={() => closeModal(MODAL_TYPES.SCORE_HISTORY)}
+      onCancel={() => closeModal(MODAL_TYPES.SCORE_HISTORY)}
       title="Truy xuất nguồn gốc điểm"
     >
       <Flex>

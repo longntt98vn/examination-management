@@ -1,5 +1,5 @@
 import mongoose, { Model, Connection } from 'mongoose';
-import { DB_CONFIGS, DB_SCHEMA } from '../config/constants';
+import { COLLECTION_NAME, DB_CONFIGS, DB_SCHEMA } from '../config/constants';
 import { UserSchema } from '../database/schemas/user.schema';
 import { LoginInfoSchema } from '../database/schemas/login-info.schema';
 import { ClassSchema } from '../database/schemas/class-schema';
@@ -14,6 +14,7 @@ import {
 } from '../database/schemas/feed-schema';
 import { SemesterSchema } from '../database/schemas/semester.schema';
 import { ScoreLogSchema } from '../database/schemas/score-log.schema';
+import CandidateSchema from '../database/schemas/candidate-schema';
 
 interface IDBConnection {
     initiated: boolean;
@@ -53,6 +54,7 @@ class DatabaseConnection implements IDBConnection {
     public Comment: Model<any> | null = null;
     public Semester: Model<any> | null = null;
     public Exam: Model<any> | null = null;
+    public Candidate: Model<any> | null = null;
 
     async init(): Promise<void> {
         if (this.initiated) {
@@ -61,7 +63,7 @@ class DatabaseConnection implements IDBConnection {
         }
 
         try {
-            const connectionString = `${DB_CONFIGS.HOST}:${DB_CONFIGS.PORT}`;
+            const connectionString = `${DB_CONFIGS.HOST}:${DB_CONFIGS.PORT}/examination`;
             console.log(`Connecting to MongoDB at ${connectionString}`);
 
             this.connection = await mongoose
@@ -70,10 +72,19 @@ class DatabaseConnection implements IDBConnection {
 
             this.LoginInfo = this.connection.model(
                 DB_SCHEMA.LOGIN_INFO,
-                LoginInfoSchema
+                LoginInfoSchema,
+                COLLECTION_NAME.LOGIN_INFO
             );
-            this.User = this.connection.model(DB_SCHEMA.USER, UserSchema);
-            this.Class = this.connection.model(DB_SCHEMA.CLASS, ClassSchema);
+            this.User = this.connection.model(
+                DB_SCHEMA.USER,
+                UserSchema,
+                COLLECTION_NAME.USER
+            );
+            this.Class = this.connection.model(
+                DB_SCHEMA.CLASS,
+                ClassSchema,
+                COLLECTION_NAME.CLASS
+            );
             this.Chat = this.connection.model(DB_SCHEMA.CHAT, ChatSchema);
             this.Message = this.connection.model(
                 DB_SCHEMA.MESSAGE,
@@ -81,12 +92,18 @@ class DatabaseConnection implements IDBConnection {
             );
             this.Subject = this.connection.model(
                 DB_SCHEMA.SUBJECT,
-                SubjectSchema
+                SubjectSchema,
+                COLLECTION_NAME.SUBJECT
             );
-            this.Score = this.connection.model(DB_SCHEMA.SCORE, ScoreSchema);
+            this.Score = this.connection.model(
+                DB_SCHEMA.SCORE,
+                ScoreSchema,
+                COLLECTION_NAME.SCORE
+            );
             this.ScoreLog = this.connection.model(
                 DB_SCHEMA.SCORE_LOG,
-                ScoreLogSchema
+                ScoreLogSchema,
+                COLLECTION_NAME.SCORE_LOG
             );
             this.Post = this.connection.model(DB_SCHEMA.POST, PostSchema);
             this.Feed = this.connection.model(DB_SCHEMA.FEED, FeedSchema);
@@ -96,13 +113,19 @@ class DatabaseConnection implements IDBConnection {
             );
             this.Semester = this.connection.model(
                 DB_SCHEMA.SEMESTER,
-                SemesterSchema
+                SemesterSchema,
+                COLLECTION_NAME.SEMESTER
             );
             this.Exam = this.connection.model(
-                DB_SCHEMA.TEST_SCHEMA,
-                ExamSchema
+                DB_SCHEMA.EXAM,
+                ExamSchema,
+                COLLECTION_NAME.EXAM
             );
-
+            this.Candidate = this.connection.model(
+                DB_SCHEMA.CANDIDATE,
+                CandidateSchema,
+                COLLECTION_NAME.CANDIDATE
+            );
             this.initiated = true;
             console.log('Database connection established successfully');
         } catch (error) {

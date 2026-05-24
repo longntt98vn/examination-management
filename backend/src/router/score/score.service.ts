@@ -1,94 +1,217 @@
 import { Request, Response } from 'express';
 import { ScoreStatus } from '../../config/constants';
+import { DBConnection } from '../../utils/db-connection';
+import { Queue } from 'bullmq';
+import { Contract } from 'fabric-network';
+import { getReasonPhrase, StatusCodes } from 'http-status-codes';
+import { ContractError } from '../../utils/errors';
+import { evatuateTransaction } from '../../utils/fabric';
+import { addSubmitTransactionJob } from '../../utils/jobs';
+import { logger } from '../../utils/logger';
+import { generateScoreHashCode } from '../../utils/hash-code';
+
+const { NOT_FOUND, INTERNAL_SERVER_ERROR, ACCEPTED } = StatusCodes;
 
 export const updateScores = async (req: Request, res: Response) => {
     try {
-        const { examId, scores } = req.body;
-
-        // Kiểm tra input
-        if (!examId || !scores || !Array.isArray(scores)) {
-            return res.status(400).json({
-                status: 'Bad Request',
-                message: 'Invalid input: examId and scores array are required',
-            });
-        }
-
+        const mspId = req.user as string;
+        const submitQueue = req.app.locals.jobq as Queue;
+        const now = Date.now();
         const results = [];
-
+        const blockchainJobs = [];
         // Xử lý từng score trong mảng
-        for (const scoreData of scores) {
-            const { studentId, value, status } = scoreData;
-
-            // Tìm score hiện tại theo examId và studentId
-            const existingScore = await global.DBConnection.Score.findOne({
-                exam_id: examId,
-                student_id: studentId,
+        for (const scoreData of req.body) {
+            const { candidateId, value, status } = scoreData;
+            const existingScore = await DBConnection.Score?.findOne({
+                candidate: candidateId,
                 is_deleted: false,
             });
-
             if (existingScore) {
-                // Nếu đã tồn tại => cập nhật
+                // UPDATE case
+                const oldValue = existingScore.value;
+                const oldStatus = existingScore.status;
+                const newStatus =
+                    status ?? existingScore.status ?? ScoreStatus.NOT_SIGNED;
                 existingScore.value = value;
-                existingScore.status = status;
-                existingScore.updated_at = new Date();
-
-                await existingScore.save();
-
-                await global.DBConnection.ScoreLog.create({
-                    score_id: existingScore._id,
-                    user_ref: req.body.user_ref,
-                    score_before: existingScore.value,
-                    score_after: value,
-                    status_before: existingScore.status,
-                    status_after: status,
+                existingScore.status = newStatus;
+                await DBConnection.Score?.updateOne(
+                    { _id: existingScore._id },
+                    { $set: { value: value, status: newStatus } }
+                );
+                await DBConnection.ScoreLog?.create({
+                    score: existingScore._id,
+                    user: req.senderInstance?._id,
+                    value_before: oldValue,
+                    value_after: value,
+                    status_before: oldStatus,
+                    status_after: newStatus,
                 });
-
+                // Đẩy lên blockchain (CreateScore transaction - chỉ cần 3 params)
+                const hashCode = generateScoreHashCode(
+                    existingScore._id.toString(),
+                    candidateId,
+                    value,
+                    status,
+                    now
+                );
+                const jobId = await addSubmitTransactionJob(
+                    submitQueue,
+                    mspId,
+                    'CreateScore', // Tên transaction trong smart contract
+                    existingScore._id.toString(), // ScoreID
+                    candidateId, // CandidateID
+                    hashCode // HashCode
+                );
+                blockchainJobs.push(jobId);
                 results.push({
-                    studentId,
+                    candidateId,
                     action: 'updated',
                     scoreId: existingScore._id,
+                    blockchainJobId: jobId,
                 });
             } else {
-                // Nếu chưa tồn tại => tạo mới
-                const newScore = new global.DBConnection.Score({
-                    exam_id: examId,
-                    student_id: studentId,
+                // CREATE case
+                const newScore = await DBConnection.Score?.create({
+                    candidate: candidateId,
                     value: value,
                     status: status,
-                    is_deleted: false,
-                    created_at: new Date(),
-                    updated_at: new Date(),
                 });
-
+                const hashCode = generateScoreHashCode(
+                    newScore._id.toString(),
+                    candidateId,
+                    value,
+                    status,
+                    now
+                );
+                newScore.hash = hashCode;
                 await newScore.save();
-                await global.DBConnection.ScoreLog.create({
-                    score_id: newScore._id,
-                    user_ref: req.body.user_ref,
-                    score_before: 0,
-                    score_after: value,
+                await DBConnection.ScoreLog?.create({
+                    score: newScore._id,
+                    user: req.senderInstance?._id,
+                    value_before: 0,
+                    value_after: value,
                     status_before: ScoreStatus.NOT_SIGNED,
                     status_after: status,
                 });
-
+                // update scoreid to candidate
+                await DBConnection.Candidate?.updateOne(
+                    { _id: candidateId },
+                    { $set: { score: newScore._id } }
+                );
+                // Đẩy lên blockchain (CreateScore transaction)
+                const jobId = await addSubmitTransactionJob(
+                    submitQueue,
+                    mspId,
+                    'CreateScore', // Tên transaction trong smart contract
+                    newScore._id.toString(), // ScoreID
+                    candidateId,
+                    hashCode
+                );
+                blockchainJobs.push(jobId);
                 results.push({
-                    studentId,
+                    candidateId,
                     action: 'created',
                     scoreId: newScore._id,
+                    blockchainJobId: jobId,
                 });
             }
         }
-
-        return res.status(200).json({
-            status: 'OK',
-            message: 'Scores updated successfully',
+        return res.status(StatusCodes.ACCEPTED).json({
+            status: getReasonPhrase(StatusCodes.ACCEPTED),
+            message: 'Scores updated and blockchain jobs queued',
             data: results,
+            blockchainJobs: blockchainJobs,
         });
     } catch (error) {
-        console.error('Error in updateScores:', error);
+        logger.error({ error }, 'Error in updateScores');
         return res.status(500).json({
             status: 'Internal Server Error',
             message: 'Failed to update scores',
             error: error instanceof Error ? error.message : 'Unknown error',
         });
     }
+};
+
+export const getScoreByConditions = async (req: Request, res: Response) => {
+    const { candidateId } = req.query;
+
+    const scores = await DBConnection.Score?.find({
+        is_deleted: false,
+        ...(candidateId && { candidate: candidateId }),
+    });
+
+    return res.status(200).json(scores);
+};
+
+export const getScoreOnChain = async (req: Request, res: Response) => {
+    const scoreId = req.params.scoreId;
+    logger.debug('Read score request received for score ID %s', scoreId);
+
+    try {
+        const mspId = req.user as string;
+        const contract = req.app.locals[mspId]?.scoreContract as Contract;
+
+        const data = await evatuateTransaction(
+            contract,
+            'GetScore',
+            scoreId.toString()
+        );
+        const score = JSON.parse(data.toString());
+
+        return res.status(200).json(score);
+    } catch (err) {
+        logger.error(
+            { err },
+            'Error processing read score request for score ID %s',
+            scoreId
+        );
+
+        if (err instanceof ContractError) {
+            return res.status(NOT_FOUND).json({
+                status: getReasonPhrase(StatusCodes.NOT_FOUND),
+                timestamp: new Date().toISOString(),
+            });
+        }
+
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            status: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
+            timestamp: new Date().toISOString(),
+        });
+    }
+};
+
+export const getAllScoresOnChain = async (req: Request, res: Response) => {
+    try {
+        const mspId = req.user as string;
+        const contract = req.app.locals[mspId]?.scoreContract as Contract;
+
+        const data = await evatuateTransaction(contract, 'GetAllScores');
+        const scores = JSON.parse(data.toString());
+
+        return res.status(200).json(scores);
+    } catch (err) {
+        logger.error({ err }, 'Error processing read all scores request');
+
+        if (err instanceof ContractError) {
+            return res.status(NOT_FOUND).json({
+                status: getReasonPhrase(NOT_FOUND),
+                timestamp: new Date().toISOString(),
+            });
+        }
+
+        return res.status(INTERNAL_SERVER_ERROR).json({
+            status: getReasonPhrase(INTERNAL_SERVER_ERROR),
+            timestamp: new Date().toISOString(),
+        });
+    }
+};
+
+export const getScoreHistory = async (req: Request, res: Response) => {
+    const { scoreId } = req.query;
+
+    const scoreHistory = await DBConnection.ScoreLog?.find({
+        score: scoreId,
+    });
+
+    return res.status(200).json(scoreHistory);
 };

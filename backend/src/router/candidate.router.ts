@@ -1,22 +1,33 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import {
-    createCandidate,
-    getAllCandidates,
+    updateCandidates,
+    getAllCandidatesOnChain,
     getCandidate,
+    getCandidateByConditions,
 } from '../services/candidate.service';
+import { CandidateStatus } from '../config/constants';
 
 export const candidateRouter = express.Router();
 
 candidateRouter.post(
     '/',
-    body().isObject(),
-    body('CandidateID', 'must be a string').notEmpty(),
-    body('ExamID', 'must be a string').notEmpty(),
-    body('HashCode', 'must be a string').notEmpty(),
+    body().isArray(),
+    body('*.candidateId', 'must be a string').notEmpty().optional(),
+    body('*.examId', 'must be a string').notEmpty(),
+    body('*.scoreId', 'must be a string').notEmpty().optional(),
+    body('*.userId', 'must be a string').notEmpty(),
+    body('*.isDeleted', 'must be a boolean').isBoolean().optional(),
+    body('*.status', 'must be a number')
+        .isIn([
+            CandidateStatus.PENDING,
+            CandidateStatus.APPROVED,
+            CandidateStatus.REJECTED,
+        ])
+        .optional(),
 
     async (req: Request, res: Response) => {
-        return await createCandidate(req, res);
+        return await updateCandidates(req, res);
     }
 );
 
@@ -25,5 +36,9 @@ candidateRouter.get('/:candidateId', async (req: Request, res: Response) => {
 });
 
 candidateRouter.get('/', async (req: Request, res: Response) => {
-    return await getAllCandidates(req, res);
+    if (req.query.getOnChain === 'true') {
+        return await getAllCandidatesOnChain(req, res);
+    }
+
+    return await getCandidateByConditions(req, res);
 });

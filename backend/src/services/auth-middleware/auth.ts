@@ -11,25 +11,19 @@ export async function validateToken(
     res: Response,
     next: NextFunction
 ) {
-    let token = req.cookies.token;
+    let token = req.headers['token'];
     try {
         // var decoded = jwt.verify(token, Configs.SECRET_KEY);
         if (!token) throw Error('TokenNotFound');
         var instance = await DBConnection.LoginInfo?.findOne({
             current_token: token,
-        }).populate('user_ref');
+        }).populate('user');
         // console.log(instance.user_ref.name);
-        if (instance != null) {
+        if (instance != null && instance.user != null) {
             req.authState = AUTH_STATE.AUTHORIZED.toString();
-            req.senderVNUId = instance.user_ref.vnu_id;
-            req.isAdmin = instance.user_ref.role == 'admin';
-            req.senderInstance = instance.user_ref;
-            if (req.senderInstance == null) throw Error('UserNotFound');
+            req.senderInstance = instance.user;
             next();
         } else {
-            req.authState = AUTH_STATE.INVALID_AUTHORIZED.toString();
-            // req.token = token;
-            // next();
             throw Error('TokenInvalid');
         }
     } catch (err) {
@@ -122,44 +116,38 @@ export function validateLoginArgument(
 export async function login(req: Request, res: Response) {
     const rUsername = req.body.username;
     const rPassword = req.body.password;
-
-    let userRef = await DBConnection.User?.findOne({ vnu_id: rUsername });
+    const userRef = await DBConnection.User?.findOne({ username: rUsername });
     if (!userRef) {
         res.status(400);
         res.json(RES_FORM(400, 'Username hoặc Password chưa đúng'));
         return;
     }
-
     try {
-        const instance = await DBConnection.LoginInfo?.findOne({
-            user_ref: userRef._id,
+        const token = jwt.sign(
+            {
+                id: userRef._id.toString(),
+                createdDate: new Date().getTime(),
+            },
+            SECRET_KEY,
+            { expiresIn: '2 days' }
+        );
+        // TẠO SESSION MỚI thay vì update session cũ
+        await DBConnection.LoginInfo?.create({
+            user: userRef._id, // Không còn unique constraint
+            username: rUsername,
+            password: '',
+            current_token: token,
+            current_socket_id: null,
         });
-
-        console.log(instance);
-
-        if (instance != null) {
-            let newToken = jwt.sign(
-                {
-                    id: instance.user_ref.toString(),
-                    createdDate: new Date().getTime(),
-                },
-                SECRET_KEY,
-                { expiresIn: '2 days' }
-            );
-            instance.current_token = newToken;
-            await instance.save();
-            res.status(200);
-            res.json(RES_FORM(200, 'Logged In Success', { token: newToken }));
-        } else {
-            res.status(400);
-            res.json(RES_FORM(400, 'Username hoặc Password chưa đúng'));
-        }
+        res.status(200);
+        res.json(RES_FORM(200, 'Logged In Success', { token: token }));
     } catch (err) {
         console.error(err);
         res.status(500);
         res.json(RES_FORM(500, 'Internal server error'));
     }
 }
+
 export async function fForgetPassword(req: Request, res: Response) {
     var email = req.body.email;
     var email_owner = await DBConnection.User?.findOne({ email: email });
