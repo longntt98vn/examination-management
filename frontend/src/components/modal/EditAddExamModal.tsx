@@ -4,25 +4,20 @@ import {
   DatePicker,
   Flex,
   Input,
-  Row,
   Select,
   Table,
-  type SelectProps,
+  Tooltip,
   type TableColumnsType,
 } from "antd";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
+import { Controller } from "react-hook-form";
+import type {  User } from "../../constants/types";
 import { MODAL_TYPES, useModal } from "../../providers/ModalProvider";
 import { CustomModal } from "../modal/CustomModal";
-import Search from "antd/es/input/Search";
+import { OnChainTag } from "../OnChainTag";
 import { useEditAddExamModal } from "./hooks/useEditAddExamModal";
-import type { User } from "../../constants/types";
 
-type Props = {
-  examId?: string;
-};
-
-export const EditAddExamModal = ({ examId }: Props) => {
+export const EditAddExamModal = () => {
   const { modals, openModal, closeModal } = useModal();
   const {
     methods,
@@ -33,13 +28,17 @@ export const EditAddExamModal = ({ examId }: Props) => {
     onSubmit,
     candidates,
     setCandidates,
-  } = useEditAddExamModal({ examId });
+    candidatesOnChain,
+    candidateUsers,
+    setCandidateUsers,
+  } = useEditAddExamModal();
   const { register, handleSubmit, control } = methods;
   const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
 
   const columns: TableColumnsType<User> = [
     {
       title: "Chọn",
+      width: 70,
       render: (_, record) => (
         <Checkbox
           checked={selectedStudents.includes(record._id)}
@@ -57,32 +56,51 @@ export const EditAddExamModal = ({ examId }: Props) => {
     },
     {
       title: "STT",
+      width: 70,
       render: (_, __, index) => index + 1,
     },
     {
       title: "Họ và tên",
-      dataIndex: "name",
-    },
-    {
-      title: "Ngày sinh",
-      dataIndex: "date_of_birth",
       render: (_, record) => {
-        return record.date_of_birth
-          ? new Date(record.date_of_birth).toLocaleDateString()
-          : "";
+        return record.name;
       },
     },
     {
       title: "Địa chỉ",
-      dataIndex: "location",
+      render: (_, record) => {
+        return (
+          <Tooltip title={record.location}>
+            {record.location.length > 15
+              ? record.location.slice(0, 15) + "..."
+              : record.location}
+          </Tooltip>
+        );
+      },
+    },
+    {
+      title: "Trạng thái chuỗi",
+      render: (_, record) => {
+        const target = candidates.find(
+          (candidate) => candidate.user._id === record._id,
+        );
+        const isValid =
+          candidatesOnChain.find(
+            (candidate) => candidate.CandidateID === target?._id,
+          )?.HashCode === target?.hash;
+        return <OnChainTag isValid={!!isValid} />;
+      },
     },
     {
       title: "Email",
-      dataIndex: "email",
+      render: (_, record) => {
+        return record.email;
+      },
     },
     {
       title: "Số điện thoại",
-      dataIndex: "phone_number",
+      render: (_, record) => {
+        return record.phone_number;
+      },
     },
   ];
 
@@ -97,7 +115,11 @@ export const EditAddExamModal = ({ examId }: Props) => {
         closeModal(MODAL_TYPES.EXAM_ADD_EDIT);
         openModal(MODAL_TYPES.EXAM_LIST);
       }}
-      title="Thêm đợt thi"
+      title={
+        modals[MODAL_TYPES.EXAM_ADD_EDIT].data.examId
+          ? "Sửa đợt thi"
+          : "Thêm đợt thi"
+      }
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <Flex vertical gap={4}>
@@ -180,20 +202,37 @@ export const EditAddExamModal = ({ examId }: Props) => {
                 openModal(MODAL_TYPES.STUDENT_LIST, {
                   examId: modals[MODAL_TYPES.EXAM_ADD_EDIT].data.examId || 1234,
                   students: students,
-                  selectedStudents: candidates,
-                  setSelectedStudents: setCandidates,
+                  selectedStudents: candidateUsers,
+                  setSelectedStudents: setCandidateUsers,
                 });
               }}
             >
               Thêm sinh viên
             </Button>
-            <Button type="default" style={{ width: 120 }} onClick={() => {}}>
+            <Button
+              type="default"
+              style={{ width: 120 }}
+              onClick={() => {
+                setCandidateUsers(
+                  candidateUsers.filter(
+                    (user) => !selectedStudents.includes(user._id),
+                  ),
+                );
+              }}
+            >
               Xóa sinh viên
             </Button>
           </Flex>
           <Table<User>
-            columns={columns}
-            dataSource={candidates}
+            // if !examId, hide  Trạng thái chuỗi column
+            columns={
+              modals[MODAL_TYPES.EXAM_ADD_EDIT].data.examId
+                ? columns
+                : columns.filter(
+                    (column) => column.title !== "Trạng thái chuỗi",
+                  )
+            }
+            dataSource={candidateUsers}
             pagination={{ pageSize: 50 }}
             scroll={{ y: 55 * 5 }}
             rowKey={"_id"}

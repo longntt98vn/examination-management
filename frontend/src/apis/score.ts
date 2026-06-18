@@ -15,3 +15,10 @@ export const getScoreHistory = async (scoreId: string) => {
   });
   return response.json();
 };
+
+export const getAllScoreOnChain = async () => {
+  const response = await fetch(`${apiUrl}/score?getOnChain=true`, {
+    headers,
+  });
+  return response.json();
+};

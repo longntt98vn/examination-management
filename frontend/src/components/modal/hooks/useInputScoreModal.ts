@@ -28,6 +28,7 @@ export const useInputScoreModal = () => {
     updateScores(
       candidates.map((c) => ({
         candidateId: c._id,
+        value: c.score?.value,
         status: ScoreStatus.TEACHER_SIGNED,
       })),
     ).then((data) => {

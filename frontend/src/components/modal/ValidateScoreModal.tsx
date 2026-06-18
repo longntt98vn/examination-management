@@ -7,16 +7,16 @@ import {
   Tooltip,
   type TableColumnsType,
 } from "antd";
-import Search from "antd/es/input/Search";
 import { ScoreStatusMap } from "../../constants";
 import type { Candidate } from "../../constants/types";
 import { MODAL_TYPES, useModal } from "../../providers/ModalProvider";
 import { CustomModal } from "../modal/CustomModal";
+import { OnChainTag } from "../OnChainTag";
 import { useValidateScoreModal } from "./hooks/useValidateScoreModal";
 
 export const ValidateScoreModal = () => {
   const { modals, openModal, closeModal } = useModal();
-  const { candidates, selectedItems, setSelectedItems, onOk } =
+  const { candidates, selectedItems, setSelectedItems, onOk, scoresOnChain } =
     useValidateScoreModal();
 
   const columns: TableColumnsType<Candidate> = [
@@ -53,6 +53,20 @@ export const ValidateScoreModal = () => {
       },
     },
     {
+      title: "Khoa",
+      render: (_, record) => {
+        return (
+          "Khoa " + Math.random().toString(36).substring(2, 15).slice(0, 4)
+        );
+      },
+    },
+    {
+      title: "Lớp",
+      render: (_, record) => {
+        return "Lớp " + Math.random().toString(36).substring(2, 15).slice(0, 4);
+      },
+    },
+    {
       title: "Điểm",
       width: 70,
       render: (_, record) => {
@@ -66,6 +80,15 @@ export const ValidateScoreModal = () => {
       },
     },
     {
+      title: "Trạng thái chuỗi",
+      render: (_, record) => {
+        const isValid =
+          scoresOnChain.find((score) => score.ScoreID === record.score?._id)
+            .HashCode === record.score?.hash;
+        return <OnChainTag isValid={!!isValid} />;
+      },
+    },
+    {
       title: "Thao tác",
       render: (_, record) => (
         <Flex>
@@ -75,7 +98,9 @@ export const ValidateScoreModal = () => {
           <Button
             type="link"
             onClick={() => {
-              openModal(MODAL_TYPES.SCORE_HISTORY, { candidateId: record._id });
+              openModal(MODAL_TYPES.SCORE_HISTORY, {
+                scoreId: record.score?._id,
+              });
             }}
           >
             Lịch sử
@@ -97,7 +122,7 @@ export const ValidateScoreModal = () => {
           Phê duyệt điểm
         </Button>
       </Flex>
-      <Flex style={{ margin: "16px 0" }}>
+      <Flex style={{ margin: "16px 0" }} gap={16}>
         <Select
           allowClear
           placeholder="Lọc theo sinh viên"
@@ -122,7 +147,7 @@ export const ValidateScoreModal = () => {
       <Table<Candidate>
         rowKey="_id"
         columns={columns}
-        dataSource={candidates}
+        dataSource={[...candidates]}
         pagination={{ pageSize: 50 }}
         scroll={{ y: 55 * 5 }}
       />

@@ -9,10 +9,13 @@ export const createExam = async (data: any) => {
   return response.json();
 };
 
-export const getExams = async () => {
-  const response = await fetch(`${apiUrl}/exam`, {
-    headers,
-  });
+export const getExams = async (query?: any) => {
+  const response = await fetch(
+    `${apiUrl}/exam?${new URLSearchParams(query || {}).toString()}`,
+    {
+      headers,
+    },
+  );
   return response.json();
 };
 

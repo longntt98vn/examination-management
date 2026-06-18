@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import type { Candidate } from "../../../constants/types";
-import { MODAL_TYPES, useModal } from "../../../providers/ModalProvider";
 import { getCandidatesByConditions } from "../../../apis/candidate";
-import { updateScores } from "../../../apis/score";
+import { getAllScoreOnChain, updateScores } from "../../../apis/score";
 import { ScoreStatus } from "../../../constants";
+import type { Candidate, ScoreOnChain } from "../../../constants/types";
+import { MODAL_TYPES, useModal } from "../../../providers/ModalProvider";
 
 export const useValidateScoreModal = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const { modals, openModal, closeModal } = useModal();
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [scoresOnChain, setScoresOnChain] = useState<ScoreOnChain[]>([]);
 
   const onOk = () => {
     updateScores(
@@ -30,8 +31,18 @@ export const useValidateScoreModal = () => {
       }).then((data) => {
         setCandidates(data);
       });
+      getAllScoreOnChain().then((data) => {
+        setScoresOnChain(data);
+      });
     }
   }, [modals[MODAL_TYPES.VALIDATE_SCORE].isOpen]);
 
-  return { candidates, setCandidates, selectedItems, setSelectedItems, onOk };
+  return {
+    candidates,
+    setCandidates,
+    selectedItems,
+    setSelectedItems,
+    onOk,
+    scoresOnChain,
+  };
 };

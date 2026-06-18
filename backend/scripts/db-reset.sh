@@ -5,6 +5,7 @@ mongosh --port 27017 --eval "db = db.getSiblingDB('examination'); db.createColle
 mongosh --port 27017 --eval "db = db.getSiblingDB('examination'); db.createCollection('semester')"
 mongosh --port 27017 --eval "db = db.getSiblingDB('examination'); db.createCollection('exam')"
 mongosh --port 27017 --eval "db = db.getSiblingDB('examination'); db.createCollection('score')"
+mongosh --port 27017 --eval "db = db.getSiblingDB('examination'); db.createCollection('login_info')"
 
 
 mongoimport --host localhost --port 27017 --db examination --collection user --type csv --headerline --file src/database/seeds/users_student.csv

@@ -5,6 +5,7 @@ import { InputScoresModal } from "../components/modal/InputScoresModal";
 import { ExamListModal } from "../components/modal/ExamListModal";
 import { ScoreHistoryModal } from "../components/modal/ScoreHistoryModal";
 import { ValidateScoreModal } from "../components/modal/ValidateScoreModal";
+import { AddEditStudentModal } from "../components/modal/AddEditStudentModal";
 
 // 1. Tạo Context
 const ModalContext = createContext<{
@@ -25,6 +26,7 @@ export const MODAL_TYPES = {
   SCORE_HISTORY: "SCORE_HISTORY",
   INPUT_SCORES: "INPUT_SCORES",
   VALIDATE_SCORE: "VALIDATE_SCORE",
+  ADD_EDIT_STUDENT: "ADD_EDIT_STUDENT",
 };
 
 const initialState = {
@@ -34,6 +36,7 @@ const initialState = {
   [MODAL_TYPES.SCORE_HISTORY]: { isOpen: false, data: {} },
   [MODAL_TYPES.INPUT_SCORES]: { isOpen: false, data: {} },
   [MODAL_TYPES.VALIDATE_SCORE]: { isOpen: false, data: {} },
+  [MODAL_TYPES.ADD_EDIT_STUDENT]: { isOpen: false, data: {} },
 };
 
 // 2. Reducer xử lý dựa trên key của modal
@@ -79,6 +82,7 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
       <ExamListModal />
       <ScoreHistoryModal />
       <ValidateScoreModal />
+      <AddEditStudentModal />
     </ModalContext.Provider>
   );
 };

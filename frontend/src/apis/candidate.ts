@@ -9,9 +9,9 @@ export const updateCandidates = async (data: any) => {
   return response.json();
 };
 
-export const getCandidatesByConditions = async (data: any) => {
+export const getCandidatesByConditions = async (query?: any) => {
   const response = await fetch(
-    `${apiUrl}/candidate?${new URLSearchParams(data).toString()}`,
+    `${apiUrl}/candidate?${new URLSearchParams(query || {}).toString()}`,
     {
       headers,
     },

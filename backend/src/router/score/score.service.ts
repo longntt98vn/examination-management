@@ -211,7 +211,9 @@ export const getScoreHistory = async (req: Request, res: Response) => {
 
     const scoreHistory = await DBConnection.ScoreLog?.find({
         score: scoreId,
-    });
+    })
+        .populate('user')
+        .lean();
 
     return res.status(200).json(scoreHistory);
 };

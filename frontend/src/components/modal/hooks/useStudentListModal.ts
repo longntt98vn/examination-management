@@ -4,10 +4,6 @@ import { MODAL_TYPES, useModal } from "../../../providers/ModalProvider";
 import { getAllUsers } from "../../../apis/user";
 import { Role } from "../../../constants";
 
-type Props = {
-  examId: string;
-};
-
 export const useStudentListModal = () => {
   const { modals } = useModal();
   const [localStudents, setLocalStudents] = useState<User[]>([]);

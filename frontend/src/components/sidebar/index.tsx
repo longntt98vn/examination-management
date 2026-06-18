@@ -11,7 +11,7 @@ export const Sidebar = () => {
         </h1>
       </Logo>
       <NavMenu>
-        <MenuHeading>Main</MenuHeading>
+        <MenuHeading>Chức năng chính</MenuHeading>
         <NavItem $active>
           <span>Bảng điều khiển</span>
         </NavItem>

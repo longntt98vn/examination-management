@@ -12,16 +12,13 @@ import { CustomModal } from "../modal/CustomModal";
 import { MODAL_TYPES, useModal } from "../../providers/ModalProvider";
 import { useExamListModal } from "./hooks/useExamListModal";
 import type { Exam } from "../../constants/types";
-
-type Props = {
-  open: boolean;
-  onClose: () => void;
-};
+import dayjs from "dayjs";
+import { OnChainTag } from "../OnChainTag";
 
 export const ExamListModal = () => {
   const { modals, openModal, closeModal } = useModal();
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const { exams, semesters } = useExamListModal();
+  const { exams, semesters, examsOnChain } = useExamListModal();
 
   const columns: TableColumnsType<Exam> = [
     {
@@ -49,13 +46,29 @@ export const ExamListModal = () => {
     {
       title: "Ngày thi",
       render: (_, record) => {
-        return record.exam_date;
+        return record.exam_date
+          ? dayjs(record.exam_date).format("DD/MM/YYYY")
+          : "";
       },
     },
+
     {
       title: "Phòng thi",
       render: (_, record) => {
         return record.room_number;
+      },
+    },
+    {
+      title: "Trạng thái chuỗi",
+      render: (_, record) => {
+        const targets = examsOnChain.filter((exam) =>
+          exam.ExamID.includes(record._id),
+        );
+        const latest = targets.sort(
+          (a, b) => Number(b.ID.split("-")[1]) - Number(a.ID.split("-")[1]),
+        )[0];
+        const isValid = latest?.HashCode === record.hash;
+        return <OnChainTag isValid={!!isValid} />;
       },
     },
     {
@@ -66,6 +79,7 @@ export const ExamListModal = () => {
           <Button
             type="link"
             onClick={() => {
+              closeModal(MODAL_TYPES.EXAM_LIST);
               openModal(MODAL_TYPES.EXAM_ADD_EDIT, { examId: record._id });
             }}
           >

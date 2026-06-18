@@ -20,9 +20,12 @@ export const CustomModal = ({
       open={open}
       onOk={onOk}
       onCancel={onCancel}
+      okText="Đồng ý"
+      cancelText="Hủy bỏ"
       width={{
         xs: "80%",
       }}
+      destroyOnHidden
     >
       {children}
     </Modal>

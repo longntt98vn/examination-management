@@ -4,6 +4,7 @@ import {
   Flex,
   Select,
   Table,
+  Tooltip,
   type TableColumnsType,
 } from "antd";
 import Search from "antd/es/input/Search";
@@ -30,6 +31,7 @@ export const StudentListModal = () => {
   const columns: TableColumnsType<User> = [
     {
       title: "Chọn",
+      width: 70,
       render: (_, record) => (
         <Checkbox
           checked={localSelectedStudents.includes(record._id)}
@@ -39,6 +41,7 @@ export const StudentListModal = () => {
     },
     {
       title: "STT",
+      width: 70,
       render: (_, __, index) => index + 1,
     },
     {
@@ -46,17 +49,16 @@ export const StudentListModal = () => {
       dataIndex: "name",
     },
     {
-      title: "Ngày sinh",
-      dataIndex: "date_of_birth",
-      render: (_, record) => {
-        return record.date_of_birth
-          ? new Date(record.date_of_birth).toLocaleDateString()
-          : "";
-      },
-    },
-    {
       title: "Địa chỉ",
-      dataIndex: "location",
+      render: (_, record) => {
+        return (
+          <Tooltip title={record.location}>
+            {record.location.length > 15
+              ? record.location.slice(0, 15) + "..."
+              : record.location}
+          </Tooltip>
+        );
+      },
     },
     {
       title: "Email",
@@ -70,7 +72,12 @@ export const StudentListModal = () => {
       title: "Thao tác",
       render: (_, record) => (
         <Flex>
-          <Button type="link" onClick={() => {}}>
+          <Button
+            type="link"
+            onClick={() => {
+              openModal(MODAL_TYPES.ADD_EDIT_STUDENT);
+            }}
+          >
             Chi tiết
           </Button>
           <Button type="link" onClick={() => {}}>
@@ -97,7 +104,7 @@ export const StudentListModal = () => {
         closeModal(MODAL_TYPES.STUDENT_LIST);
       }}
       onCancel={() => closeModal(MODAL_TYPES.STUDENT_LIST)}
-      title="Sinh viên"
+      title="Danh sách sinh viên"
     >
       <Flex style={{ marginBottom: 16 }}>
         <Search
@@ -125,7 +132,7 @@ export const StudentListModal = () => {
         columns={haveSelect ? columns : [...columns.slice(1)]}
         dataSource={localStudents}
         pagination={{ pageSize: 50 }}
-        scroll={{ y: 55 * 5 }}
+        scroll={{ y: 55 * 6 }}
         rowKey={"_id"}
       />
     </CustomModal>

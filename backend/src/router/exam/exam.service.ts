@@ -1,22 +1,18 @@
 import { Queue } from 'bullmq';
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { getReasonPhrase, StatusCodes } from 'http-status-codes';
-import { addSubmitTransactionJob } from '../../utils/jobs';
-import { ContractError } from '../../utils/errors';
-import { logger } from '../../utils/logger';
-import { evatuateTransaction } from '../../utils/fabric';
 import { Contract } from 'fabric-network';
-const { BAD_REQUEST, ACCEPTED, INTERNAL_SERVER_ERROR, NOT_FOUND } = StatusCodes;
+import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { DBConnection } from '../../utils/db-connection';
+import { ContractError } from '../../utils/errors';
+import { evatuateTransaction } from '../../utils/fabric';
 import { generateExamHashCode } from '../../utils/hash-code';
-import { checkUserExist } from '../user/user.service';
+import { addSubmitTransactionJob } from '../../utils/jobs';
+import { logger } from '../../utils/logger';
 import { checkSemesterExist } from '../semester/semester.service';
 import { checkSubjectExist } from '../subject/subject.service';
-import {
-    createCandidate,
-    updateCandidates,
-} from '../../services/candidate.service';
+import { checkUserExist } from '../user/user.service';
+const { BAD_REQUEST, ACCEPTED, INTERNAL_SERVER_ERROR, NOT_FOUND } = StatusCodes;
 
 export const createExamOnChain = async (req: Request, res: Response) => {
     const mspId = req.user as string;
@@ -93,7 +89,7 @@ export const createExam = async (req: Request, res: Response) => {
             submitQueue,
             mspId,
             'CreateExam',
-            exam._id.toString(),
+            `${exam._id}-${now}`,
             hashCode
         );
 
@@ -170,11 +166,83 @@ export const getExams = async (req: Request, res: Response) => {
 };
 
 export const updateExam = async (req: Request, res: Response) => {
-    const examId = req.params.examId;
-    const exam = await DBConnection.Exam?.findByIdAndUpdate(examId, req.body, {
-        new: true,
-    });
-    return res.status(200).json(exam);
+    try {
+        const examId = req.body.examId;
+
+        const existingExam = await DBConnection.Exam?.findById(examId);
+        if (!existingExam) {
+            return res.status(NOT_FOUND).json({
+                status: getReasonPhrase(NOT_FOUND),
+                message: 'Exam not found',
+            });
+        }
+
+        const [semester, subject, teacher] = await Promise.all([
+            checkSemesterExist(req.body.semesterId),
+            checkSubjectExist(req.body.subjectId),
+            checkUserExist(req.body.teacherId),
+        ]);
+        if (!semester || !subject || !teacher) {
+            return res.status(BAD_REQUEST).json({
+                status: getReasonPhrase(BAD_REQUEST),
+                message: 'Semester, subject or teacher not found',
+            });
+        }
+
+        const mspId = req.user as string;
+        const submitQueue = req.app.locals.jobq as Queue;
+        const now = Date.now();
+
+        const hashCode = generateExamHashCode(
+            examId,
+            req.body.semesterId,
+            req.body.subjectId,
+            req.body.teacherId,
+            req.body.name,
+            req.body.examDate,
+            req.body.roomNumber,
+            now
+        );
+
+        const exam = await DBConnection.Exam?.findByIdAndUpdate(
+            examId,
+            {
+                semester: req.body.semesterId,
+                subject: req.body.subjectId,
+                teacher: req.body.teacherId,
+                name: req.body.name,
+                exam_date: req.body.examDate,
+                room_number: req.body.roomNumber,
+                hash: hashCode,
+                updated_at: now,
+            },
+            {
+                returnDocument: 'after',
+            }
+        );
+
+        const jobId = await addSubmitTransactionJob(
+            submitQueue,
+            mspId,
+            'CreateExam',
+            `${examId}-${now}`,
+            hashCode
+        );
+
+        return res.status(ACCEPTED).json({
+            status: getReasonPhrase(ACCEPTED),
+            message: 'Exam updated and blockchain job queued',
+            data: exam,
+            blockchainJobId: jobId,
+        });
+    } catch (error) {
+        logger.error({ error }, 'Error in updateExam');
+        return res.status(INTERNAL_SERVER_ERROR).json({
+            status: getReasonPhrase(INTERNAL_SERVER_ERROR),
+            message: 'Failed to update exam',
+            error: error instanceof Error ? error.message : 'Unknown error',
+        });
+    }
 };
 
 export const deleteExam = async (req: Request, res: Response) => {

@@ -755,11 +755,13 @@ const FasIcon = styled.i`
 `;
 
 export const Header = () => {
+  const name = "Nguyễn Văn Bách";
+  const role = "Giáo viên";
   return (
     <Wrapper>
       <SearchBar>
         <i className="fas fa-search" />
-        <input type="text" placeholder="Search..." />
+        <input type="text" placeholder="Tìm kiếm..." />
       </SearchBar>
       <HeaderActions>
         <Notification>
@@ -771,10 +773,10 @@ export const Header = () => {
           <Badge>5</Badge>
         </Notification>
         <UserProfile>
-          <ProfileImg>JD</ProfileImg>
+          <ProfileImg>{name.slice(0, 2)}</ProfileImg>
           <UserInfo>
-            <UserName>John Doe</UserName>
-            <UserRole>Administrator</UserRole>
+            <UserName>{name}</UserName>
+            <UserRole>{role}</UserRole>
           </UserInfo>
         </UserProfile>
       </HeaderActions>

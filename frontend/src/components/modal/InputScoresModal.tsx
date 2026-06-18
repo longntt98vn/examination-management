@@ -44,6 +44,20 @@ export const InputScoresModal = () => {
       render: (_, r) => r.user.name,
     },
     {
+      title: "Khoa",
+      render: (_, r) => {
+        // mock data with random string
+        return (
+          "Khoa " + Math.random().toString(36).substring(2, 15).slice(0, 4)
+        );
+      },
+    },
+    {
+      title: "Lớp",
+      render: (_, r) =>
+        "Lớp " + Math.random().toString(36).substring(2, 15).slice(0, 4),
+    },
+    {
       title: "Điểm",
       render: (_, r) => (
         <Input
@@ -114,7 +128,7 @@ export const InputScoresModal = () => {
       <Table<Candidate>
         rowKey="_id"
         columns={columns}
-        dataSource={candidates}
+        dataSource={[...candidates]}
         pagination={{ pageSize: 50 }}
         scroll={{ y: 55 * 5 }}
       />

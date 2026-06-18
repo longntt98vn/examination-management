@@ -371,7 +371,7 @@ fi
 if [[ -f "$RUN_DIR/redis.password" ]]; then
     REDIS_PASSWORD="$(cat "$RUN_DIR/redis.password")"
 else
-    REDIS_PASSWORD="$(uuidgen)"
+    REDIS_PASSWORD="0000"
     echo "$REDIS_PASSWORD" > "$RUN_DIR/redis.password"
 fi
 export REDIS_PASSWORD
